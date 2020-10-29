@@ -20,7 +20,7 @@ def PCA_(data,labels):
 #     print(tsne.size)
 
 def main():
-    PCA_(ts_spikes)
+    PCA_(ts_spikes,labels)
     # TSNE_(ts_spikes)
 if __name__ == "__main__":
     main()
