@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
 ts_spikes = np.load("donkeykong.5000.ts.spikes.npy", mmap_mode='r')
-labels = ts_spikes[1:len(ts_spikes)-1,:]
+labels = ts_spikes[1:len(ts_spikes),:]
 labels=np.vstack([labels, ts_spikes[len(ts_spikes)-1,:]])
 print(labels.shape,ts_spikes.shape)
 
