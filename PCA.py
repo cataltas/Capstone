@@ -14,6 +14,7 @@ labels_dict = {}
 encoded_labels=[]
 c=0
 for i,label in enumerate(labels):
+    label = str(label)
     if label in labels_dict.keys():
         encoded_labels.append(labels_dict[label])
     else:
