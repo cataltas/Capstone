@@ -18,7 +18,10 @@ for i,label in enumerate(labels):
     if label in labels_dict.keys():
         encoded_labels.append(labels_dict[label])
     else:
-        labels_dict[label]=c+1
+        c=c+1
+        labels_dict[label]=c
+        encoded_labels.append(c)
+
 print(encoded_labels[0:20],len(encoded_labels))
 
 
