@@ -6,6 +6,9 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
 ts_spikes = np.load("donkeykong.5000.ts.spikes.npy", mmap_mode='r')
+labels = ts_spikes[1:len(ts_spikes)-1,:]
+labels=np.vstack([labels, ts_spikes[len(ts_spikes)-1]])
+print(labels.size())
 
 def PCA_(data):
     fig = plt.figure(1, figsize=(8, 6))
@@ -21,13 +24,14 @@ def PCA_(data):
     ax.set_zlabel("3rd eigenvector")
     ax.w_zaxis.set_ticklabels([])
     plt.savefig("PCA.pdf",dpi=150)
+    print(X_reduced.explained_variance_ratio_)
 
 def TSNE_(data):
     tsne = TSNE(n_components=2).fit_transform(data)
     print(tsne.size)
 
 def main():
-    PCA_(ts_spikes)
+    # PCA_(ts_spikes)
     # TSNE_(ts_spikes)
 if __name__ == "__main__":
     main()
