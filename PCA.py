@@ -20,7 +20,7 @@ def PCA_(data):
     ax.w_yaxis.set_ticklabels([])
     ax.set_zlabel("3rd eigenvector")
     ax.w_zaxis.set_ticklabels([])
-    plt.savefig("PCA.png")
+    plt.savefig("PCA.pdf",dpi=150)
 
 def TSNE_(data):
     tsne = TSNE(n_components=2).fit_transform(data)
