@@ -1,5 +1,3 @@
-import matplotlib
-matplotlib.use('Agg')
 import pandas as pd
 import numpy as np
 from sklearn.decomposition import PCA
@@ -16,17 +14,21 @@ def PCA_(data,labels):
     pca = PCA(n_components=3)
     pca_result = pca.fit_transform(data)
     print('Explained variation per principal component: {}'.format(pca.explained_variance_ratio_))
-    ax = plt.figure(figsize=(16,10)).gca(projection='3d')
-    ax.scatter(
-    xs=pca_result[:,0], 
-    ys=pca_result[:,1], 
-    zs=pca_result[:,2], 
-    c=labels, 
-    cmap='tab10'
-    )
-    ax.set_xlabel('pca-one')
-    ax.set_ylabel('pca-two')
-    ax.set_zlabel('pca-three')
+    # ax = plt.figure(figsize=(16,10)).gca(projection='3d')
+    # ax.scatter(
+    # xs=pca_result[:,0], 
+    # ys=pca_result[:,1], 
+    # zs=pca_result[:,2], 
+    # c=labels, 
+    # cmap='tab10'
+    # )
+    # ax.set_xlabel('pca-one')
+    # ax.set_ylabel('pca-two')
+    # ax.set_zlabel('pca-three')
+    plt.figure(figsize=(16,10))
+    plt.scatter(pca_result[:,0],label="First Component")
+    plt.scatter(pca_result[:,1],label="Second Component")
+    plt.scatter(pca_result[:,2],label="Third Component")
     plt.savefig("PCA.png")
 
 def TSNE_(data):
