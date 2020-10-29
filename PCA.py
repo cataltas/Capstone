@@ -28,7 +28,7 @@ for i,label in enumerate(labels):
 def PCA_(data,labels):
     fig = plt.figure(1, figsize=(8, 6))
     ax = Axes3D(fig, elev=-150, azim=110)
-    X_reduced = PCA(n_components=3).fit_transform(iris.data)
+    X_reduced = PCA(n_components=3).fit_transform(data)
     ax.scatter(X_reduced[:, 0], X_reduced[:, 1], X_reduced[:, 2], c=labels,
             cmap=plt.cm.Set1, edgecolor='k', s=40)
     ax.set_title("First three PCA directions")
