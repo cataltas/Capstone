@@ -19,7 +19,7 @@ for i,label in enumerate(labels):
         encoded_labels.append(labels_dict[label])
     else:
         labels_dict[label]=c+1
-print(labels[0:20],len(labels))
+print(encoded_labels[0:20],len(encoded_labels))
 
 
 # def PCA_(data,labels):
