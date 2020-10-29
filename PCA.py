@@ -8,7 +8,7 @@ from mpl_toolkits.mplot3d import Axes3D
 ts_spikes = np.load("donkeykong.5000.ts.spikes.npy", mmap_mode='r')
 labels = ts_spikes[1:len(ts_spikes)-1,:]
 labels=np.vstack([labels, ts_spikes[len(ts_spikes)-1,:]])
-print(labels.size())
+print(labels)
 
 # def PCA_(data):
 #     fig = plt.figure(1, figsize=(8, 6))
