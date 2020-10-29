@@ -15,14 +15,13 @@ encoded_labels=[]
 c=0
 for i,label in enumerate(labels):
     label = str(label)
-    print(label)
     if label in labels_dict.keys():
         encoded_labels.append(labels_dict[label])
     else:
         c=c+1
         labels_dict[label]=c
         encoded_labels.append(c)
-print(c)
+print(labels[0:10,:],encoded_labels[0:10])
 
 
 # def PCA_(data,labels):
