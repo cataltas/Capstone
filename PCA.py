@@ -1,3 +1,5 @@
+import matplotlib
+matplotlib.use('Agg')
 import pandas as pd
 import numpy as np
 from sklearn.decomposition import PCA
@@ -27,9 +29,9 @@ def PCA_(data,labels):
     ax.set_zlabel('pca-three')
     plt.savefig("PCA.png")
 
-# def TSNE_(data):
-#     tsne = TSNE(n_components=2).fit_transform(data)
-#     print(tsne.size)
+def TSNE_(data):
+    tsne = TSNE(n_components=2).fit_transform(data)
+    print(tsne.size)
 
 def main():
     PCA_(ts_spikes,labels)
