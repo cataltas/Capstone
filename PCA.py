@@ -19,8 +19,8 @@ def PCA_(data,labels):
 #     tsne = TSNE(n_components=2).fit_transform(data)
 #     print(tsne.size)
 
-# def main():
-#     PCA_(ts_spikes)
-#     # TSNE_(ts_spikes)
-# if __name__ == "__main__":
-#     main()
+def main():
+    PCA_(ts_spikes)
+    # TSNE_(ts_spikes)
+if __name__ == "__main__":
+    main()
