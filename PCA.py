@@ -42,6 +42,7 @@ for i,label in enumerate(labels):
 
 def TSNE_(data,labels):
     N = 10000
+    data =np.concatenate(data,labels,axis=1)
     rndperm = np.random.permutation(data.shape[0])
     data_subset = data[rndperm[:N],:].copy()
     time_start = time.time()
