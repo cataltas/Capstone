@@ -42,7 +42,6 @@ for i,label in enumerate(labels):
 
 def TSNE_(data,labels):
     N = 10000
-    data =np.concatenate(data,labels,axis=1)
     rndperm = np.random.permutation(data.shape[0])
     data_subset = data[rndperm[:N],:].copy()
     time_start = time.time()
@@ -52,7 +51,7 @@ def TSNE_(data,labels):
     plt.figure(figsize=(16,10))
     sns.scatterplot(
     x=tsne_results[:,0], y=tsne_results[:,1],
-    hue=labels,
+    hue=labels[rndperm[:N],:],
     palette=sns.color_palette("hls", 8),
     legend="full",
     alpha=0.3
