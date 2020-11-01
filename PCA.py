@@ -43,7 +43,7 @@ for i,label in enumerate(labels):
 def TSNE_(data,labels):
     N = 10000
     rndperm = np.random.permutation(data.shape[0])
-    data_subset = data.loc[rndperm[:N],:].copy()
+    data_subset = data[rndperm[:N],:].copy()
     time_start = time.time()
     tsne = TSNE(n_components=2, verbose=1, perplexity=40, n_iter=300)
     tsne_results = tsne.fit_transform(data_subset)
