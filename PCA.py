@@ -26,18 +26,17 @@ for i,label in enumerate(labels):
 
 
 def PCA_(data,labels):
-    fig = plt.figure(1, figsize=(8, 6))
-    ax = Axes3D(fig, elev=-150, azim=110)
-    X_reduced = PCA(n_components=3).fit_transform(data)
-    ax.scatter(X_reduced[:, 0], X_reduced[:, 1], X_reduced[:, 2], c=labels)
-    ax.set_title("First three PCA directions")
-    ax.set_xlabel("1st eigenvector")
-    ax.w_xaxis.set_ticklabels([])
-    ax.set_ylabel("2nd eigenvector")
-    ax.w_yaxis.set_ticklabels([])
-    ax.set_zlabel("3rd eigenvector")
-    ax.w_zaxis.set_ticklabels([])
-    plt.savefig("PCA_labels.png")
+    pca = PCA(n_components=2)
+    X_reduced = pca.fit_transform(data)
+    plt.figure(figsize=(16,10))
+    sns.scatterplot(
+    x=X_reduced[:,0], y=X_reduced[:,0],
+    hue=labels,
+    palette=sns.color_palette("hls", 8),
+    legend="full",
+    alpha=0.3)
+    plt.savefig("PCA_labels_2d.png")
+    print('Explained variation per principal component: {}'.format(pca.explained_variance_ratio_))
 
 # def TSNE_(data):
 #     tsne = TSNE(n_components=2).fit_transform(data)
