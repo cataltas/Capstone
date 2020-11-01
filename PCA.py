@@ -30,7 +30,7 @@ def PCA_(data,labels):
     X_reduced = pca.fit_transform(data)
     plt.figure(figsize=(16,10))
     sns.scatterplot(
-    x=X_reduced[:,0], y=X_reduced[:,0],
+    x=X_reduced[:,0], y=X_reduced[:,1],
     hue=labels,
     palette=sns.color_palette("hls", 8),
     legend="full",
