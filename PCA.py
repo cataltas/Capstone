@@ -45,6 +45,7 @@ def TSNE_(data,labels):
     rndperm = np.random.permutation(data.shape[0])
     data_subset = data[rndperm[:N],:].copy()
     labels_subset = [labels[i] for i in rndperm[:N]] 
+    values, counts = np.unique(labels_subset, return_counts=True)
     time_start = time.time()
     tsne = TSNE(n_components=2, verbose=1, perplexity=40, n_iter=300)
     tsne_results = tsne.fit_transform(data_subset)
@@ -53,7 +54,7 @@ def TSNE_(data,labels):
     sns.scatterplot(
     x=tsne_results[:,0], y=tsne_results[:,1],
     hue=labels_subset,
-    palette=sns.color_palette("hls", 8),
+    palette=sns.color_palette("hls", counts),
     legend="full",
     alpha=0.3
     )
