@@ -39,7 +39,7 @@ for i,label in enumerate(labels):
 #     print('Explained variation per principal component: {}'.format(pca.explained_variance_ratio_))
 
 def TSNE_(data,labels):
-    tsne = TSNE(n_components=2,n_iter=1)
+    tsne = TSNE(n_components=2,n_iter=250)
     tsne_results=tsne.fit_transform(data)
     plt.figure(figsize=(16,10))
     sns.scatterplot(
