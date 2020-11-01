@@ -7,6 +7,8 @@ from sklearn.manifold import TSNE
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import seaborn as sns
+import time
+
 
 
 ts_spikes = np.load("donkeykong.5000.ts.spikes.npy", mmap_mode='r')
@@ -39,8 +41,13 @@ for i,label in enumerate(labels):
 #     print('Explained variation per principal component: {}'.format(pca.explained_variance_ratio_))
 
 def TSNE_(data,labels):
-    tsne = TSNE(n_components=2,n_iter=250)
-    tsne_results=tsne.fit_transform(data)
+    N = 10000
+    rndperm = np.random.permutation(data.shape[0])
+    data_subset = data.loc[rndperm[:N],:].copy()
+    time_start = time.time()
+    tsne = TSNE(n_components=2, verbose=1, perplexity=40, n_iter=300)
+    tsne_results = tsne.fit_transform(data_subset)
+    print('t-SNE done! Time elapsed: {} seconds'.format(time.time()-time_start))
     plt.figure(figsize=(16,10))
     sns.scatterplot(
     x=tsne_results[:,0], y=tsne_results[:,1],
