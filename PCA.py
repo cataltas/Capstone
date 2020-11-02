@@ -45,7 +45,7 @@ def TSNE_(data,labels):
     rndperm = np.random.permutation(data.shape[0])
     data_subset = data[rndperm[:N],:].copy()
     labels_subset = [labels[i] for i in rndperm[:N]] 
-    print(len(unique(labels_subset)))
+    print(len(np.unique(labels_subset)))
     # time_start = time.time()
     # tsne = TSNE(n_components=2, verbose=1, perplexity=40, n_iter=300)
     # tsne_results = tsne.fit_transform(data_subset)
