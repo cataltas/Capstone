@@ -6,6 +6,6 @@ The PNG file TNSE.png is the 2d scatterplot of the two dimensions when performin
 
 The labels for all three plots have been encoded such that each unique array has been attributed an integer value. For the whole dataset we have 8 such unique labels. 
 
-The dataset used for this datavisualisation is that of Eric Jonas' github repository. We will re-run these experiments once we have our actual dataset. 
+The dataset used for this data visualisation is that of Eric Jonas' github repository. We will re-run these experiments once we have our actual dataset. 
 
 Take aways: These plots are hard to interpret due to the fact that we have a disproportional amount of steps where all the transistors are off. 
