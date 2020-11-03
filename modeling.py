@@ -11,12 +11,6 @@ from torch import nn
 from torch import optim
 from torch.utils.data import random_split, DataLoader
 
-! wget -O donkeykong.5000.ts.spikes.npy.gz https://s3-us-west-2.amazonaws.com/ericmjonas-public/data/neuroproc/donkeykong.5000.ts.spikes.npy.gz
-! wget -O donkeykong.5000.ws.spikes.npy.gz https://s3-us-west-2.amazonaws.com/ericmjonas-public/data/neuroproc/donkeykong.5000.ts.spikes.npy.gz
-    
-!gunzip -f donkeykong.5000.ts.spikes.npy.gz
-!gunzip -f donkeykong.5000.ws.spikes.npy.gz
-
 
 # Eric Jonas: I highly recommend mmapping-in the files -- not necessary for the small one but the others are 20+ GB
 ts_spikes = np.load("donkeykong.5000.ts.spikes.npy", mmap_mode='r')
@@ -35,8 +29,8 @@ print("size of subset",data_subset.shape, data_subset[1,:].shape)
 
 data_subset.shape
 X = data_subset[0:-1,:]
-X_t_minus1 = data_subset[1:,:]
-y = X_t_minus1
+y = data_subset[1:,:]
+y=np.vstack([y, X[len(X)-1,:]])
 
 # Set up device 
 cuda = torch.cuda.is_available()
@@ -72,7 +66,7 @@ val_data_tensor, test_data_tensor = data_tensor[:val_length],data_tensor[val_len
 
 input_dim = 7020
 output_dim = 7020
-hidden_dim = 10000
+hidden_dim = 50000
 print(input_dim,output_dim,hidden_dim)
 
 # Define model
@@ -96,15 +90,12 @@ loss = nn.BCELoss()
 '''
 Note: This is full batch.
 '''
-def train(model, epochs, x, y):
+def train(model, epochs, x, y,optimizer, criterion):
     
     # Set model to training mode
     model.train()
     
     # Define MSE loss function
-    criterion = nn.MSELoss()
-    
-    optimizer = torch.optim.SGD(model.parameters(), lr=0.001)
     
     for epoch in range(epochs):
         
@@ -136,13 +127,10 @@ def train(model, epochs, x, y):
 '''
 Note: This is full batch.
 '''
-def validation(model, x, y):
+def validation(model, x, y, criterion):
     
     model.eval()
-    
-    # Define MSE loss function
-    criterion = nn.MSELoss()
-        
+            
     losses = list()
 
     with torch.no_grad():
@@ -158,7 +146,7 @@ def validation(model, x, y):
 # Training data
 x = train_data_tensor[:,:input_dim]
 y_true = train_data_tensor[:,input_dim:]
-y_pred = train(model, epochs=500, x=x, y=y_true)
+y_pred = train(model, epochs=50, x=x, y=y_true, optimizer=optimizer, criterion = loss)
 
 # # Plot predictions vs actual data
 # plt.scatter(x, y_true)
@@ -168,7 +156,7 @@ y_pred = train(model, epochs=500, x=x, y=y_true)
 # Validation data
 x_val = val_data_tensor[:,:input_dim]
 y_val_true = val_data_tensor[:,input_dim:]
-y_val_pred = validation(model, x=x_val, y=y_val_true)
+y_val_pred = validation(model, x=x_val, y=y_val_true, criterion = loss)
 
 # # Plot predictions vs actual data
 # plt.scatter(x_val, y_val_true)
