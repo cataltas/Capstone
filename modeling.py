@@ -6,7 +6,7 @@ import numpy as np
 import sklearn as sk
 from sklearn.model_selection import *
 import random
-import torch
+import pytorch
 from torch import nn
 from torch import optim
 from torch.utils.data import random_split, DataLoader
