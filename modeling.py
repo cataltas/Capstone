@@ -6,6 +6,7 @@ import numpy as np
 import sklearn as sk
 from sklearn.model_selection import *
 import random
+import torch
 from torch import nn
 from torch import optim
 from torch.utils.data import random_split, DataLoader
@@ -27,7 +28,7 @@ data_subset = data[:10000,:]
 print("size of subset",data_subset.shape, data_subset[1,:].shape)
 
 data_subset.shape
-X = data_subset[0:-1,:]
+X = data_subset
 y = data_subset[1:,:]
 y=np.vstack([y, X[len(X)-1,:]])
 
