@@ -23,7 +23,7 @@ data = np.concatenate((ts_spikes,ts_voltage),axis=1)
 print('shape of input matrix, shape of a single example:',data.shape, data[1,:].shape)
 
 # Use this to analyze a subset of data
-data_subset = data[:10000,:]
+data_subset = data[:1000,:]
 
 print("size of subset",data_subset.shape, data_subset[1,:].shape)
 
