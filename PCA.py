@@ -10,7 +10,6 @@ import seaborn as sns
 import time
 
 
-
 ts_spikes = np.load("donkeykong.5000.ts.spikes.npy", mmap_mode='r')
 labels = ts_spikes[1:len(ts_spikes),:]
 labels=np.vstack([labels, ts_spikes[len(ts_spikes)-1,:]])
@@ -60,7 +59,7 @@ def TSNE_(data,labels):
     plt.savefig("TSNE.png")
 
 def main():
-    PCA_(ts_spikes/,encoded_labels)
+    PCA_(ts_spikes,encoded_labels)
     TSNE_(ts_spikes,encoded_labels)
 if __name__ == "__main__":
     main()
