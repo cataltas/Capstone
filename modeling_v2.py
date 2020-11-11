@@ -160,7 +160,7 @@ print('number of changes in training set:',np.sum(np.array(y_true),axis=1))
 
 # Set number of epochs
 ep = 100
-bsize = int(subset_size//5)
+bsize = int(subset_size//10)
 print('batch size',bsize)
 
 #print('epochs:',ep)
@@ -180,6 +180,7 @@ print('number of changes in validation set:',np.sum(np.array(y_val_true),axis=1)
 
 fig = plt.figure(figsize=(7,7))
 plt.plot(np.arange(0,100,100/len(train_loss)),train_loss)
+plt.title('BCELoss over training epochs')
 #plt.close()
 fig.savefig('figure.pdf')
 
@@ -240,7 +241,11 @@ for n in range(1,len(x_val)-1):
     # print('y_next:', 1*(np.array(y_next)>0.5), np.sum(np.array(y_next)), len(y_next))
     losses_new.append(losses)
 
+print(np.array(losses_new).shape)
 fig = plt.figure(figsize=(7,7))
-plt.plot(np.arange(0,100,100/len(losses_new)),losses_new)
+plt.plot(np.arange(0,n,n/len(losses_new)),losses_new)
+plt.xlabel('n')
+plt.ylabel('BCELoss')
+plt.title('BCELoss predicting n successive steps')
 #plt.close()
 fig.savefig('figure2.pdf')
