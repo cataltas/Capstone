@@ -117,20 +117,20 @@ def train(model, batch_size, epochs, x, y,optimizer, criterion):
             loss = criterion(y_pred, y_batch)
             #print('loss',loss)
 
-            losses.append(loss.item())
-
             model.zero_grad()
 
             loss.backward()
 
             optimizer.step()
 
-        if (epoch+1) % 20 == 0:
-            print('Epoch {} loss: {}, {}'.format(epoch+1, loss.item(), torch.tensor(losses).mean() ))
+            losses.append(loss.item())
 
-        if loss.item() < 1e-2:
-            print('Epoch {} loss: {}, {}'.format(epoch+1, loss.item(), torch.tensor(losses).mean() ))
-            break
+            if (epoch+1) % 20 == 0:
+                print('Epoch {} loss: {}, {}'.format(epoch+1, loss.item(), torch.tensor(losses).mean() ))
+
+            if loss.item() < 1e-2:
+                print('Epoch {} loss: {}, {}'.format(epoch+1, loss.item(), torch.tensor(losses).mean() ))
+                break
 
     return y_pred.detach(), losses
 
@@ -170,6 +170,6 @@ y_val_true = val_data_tensor[:,input_dim:].float().to(device)
 y_val_pred,losses = validation(model, x=x_val, y=y_val_true, criterion = loss_criterion)
 val_loss = losses
 
-fig = plt.figure(figsize=(7,7))
+fig = plt.figure()
 plt.plot(np.arange(0,100,100/len(train_loss)),train_loss)
 fig.savefig('figure.png')
