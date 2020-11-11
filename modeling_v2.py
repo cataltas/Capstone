@@ -196,6 +196,8 @@ print('len validation',len(x_val))
 
 # Store generated predictions
 y_gen = list()
+# Store losses
+losses_list = list()
 # Loop over validation set
 for n in range(1,len(x_val)):
     # Predict next state using trained model
@@ -208,6 +210,8 @@ for n in range(1,len(x_val)):
     # Update ground truth
     y_new = val_data_tensor[n-1:n,input_dim:].float().to(device)
     # print('y_new:',np.sum(np.array(y_new)), len(y_new))
+
+    losses_list.append(losses)
 
     # Store generated predictions
     y_gen.append( (y_next>0.5).float().numpy() )
