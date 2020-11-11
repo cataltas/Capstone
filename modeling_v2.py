@@ -181,7 +181,7 @@ print('number of changes in validation set:',np.sum(np.array(y_val_true),axis=1)
 fig = plt.figure(figsize=(7,7))
 plt.plot(np.arange(0,100,100/len(train_loss)),train_loss)
 #plt.close()
-fig.savefig('figure.png')
+fig.savefig('figure.pdf')
 
 # Use model to predict next state given previous state's prediction
 n = 1
@@ -237,4 +237,4 @@ for n in range(1,len(x_val)-1):
 fig = plt.figure(figsize=(7,7))
 plt.plot(np.arange(0,100,100/len(losses_new)),losses_new)
 #plt.close()
-fig.savefig('figure2.png')
+fig.savefig('figure2.pdf')
