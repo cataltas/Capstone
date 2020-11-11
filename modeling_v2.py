@@ -63,7 +63,7 @@ val_data_tensor, test_data_tensor = data_tensor[:val_length].float(),data_tensor
 
 input_dim = 7020
 output_dim = 7020
-hidden_dim = 50000
+hidden_dim = 500
 print('input, output, hidden dim:',input_dim,output_dim,hidden_dim)
 
 # Define model
@@ -92,13 +92,14 @@ def train(model, batch_size, epochs, x, y,optimizer, criterion):
     model.train()
 
     # Define MSE loss function
-    num_batches = len(x) // batch_size
-    print('batches:',num_batches)
+    num_batches = (len(x)+batch_size-1) // batch_size # floor operator
+    print('number of batches:',num_batches)
 
     for epoch in range(epochs):
 
         torch.cuda.empty_cache()
 
+        losses = list()
         for b in range(num_batches):
 
             b_start = b * batch_size
@@ -107,7 +108,6 @@ def train(model, batch_size, epochs, x, y,optimizer, criterion):
             x_batch = x[b_start:b_end]
             y_batch = y[b_start:b_end]
 
-            losses = list()
             torch.cuda.empty_cache()
             #print('losses',losses)
 
@@ -124,13 +124,14 @@ def train(model, batch_size, epochs, x, y,optimizer, criterion):
             optimizer.step()
 
             losses.append(loss.item())
+            # print(loss.item(), losses)
 
-            if (epoch+1) % 20 == 0:
-                print('Epoch {} loss: {}, {}'.format(epoch+1, loss.item(), torch.tensor(losses).mean() ))
+        if (epoch+1) % 20 == 0:
+            print('Epoch {} loss: {}, {}'.format(epoch+1, loss.item(), torch.tensor(losses).mean() ))
 
-            if loss.item() < 1e-2:
-                print('Epoch {} loss: {}, {}'.format(epoch+1, loss.item(), torch.tensor(losses).mean() ))
-                break
+        if loss.item() < 1e-2:
+            print('Epoch {} loss: {}, {}'.format(epoch+1, loss.item(), torch.tensor(losses).mean() ))
+            break
 
     return y_pred.detach(), losses
 
@@ -154,13 +155,15 @@ def validation(model, x, y, criterion):
 x = train_data_tensor[:,:input_dim].float().to(device)
 y_true = train_data_tensor[:,input_dim:].float().to(device)
 
+print('number of changes in training set:',np.sum(np.array(y_true),axis=1))
+
 # Set number of epochs
 ep = 100
 
 #print('epochs:',ep)
 #print('len x:',len(x)/5, int(len(x)/5))
 
-y_pred, losses = train(model, batch_size=5, epochs=ep, x=x, y=y_true, optimizer=optimizer, criterion = loss_criterion)
+y_pred, losses = train(model, batch_size=10, epochs=ep, x=x, y=y_true, optimizer=optimizer, criterion = loss_criterion)
 train_loss = losses
 torch.cuda.empty_cache()
 
@@ -170,6 +173,65 @@ y_val_true = val_data_tensor[:,input_dim:].float().to(device)
 y_val_pred,losses = validation(model, x=x_val, y=y_val_true, criterion = loss_criterion)
 val_loss = losses
 
-fig = plt.figure()
+print('number of changes in validation set:',np.sum(np.array(y_val_true),axis=1))
+
+fig = plt.figure(figsize=(7,7))
 plt.plot(np.arange(0,100,100/len(train_loss)),train_loss)
+plt.close()
 fig.savefig('figure.png')
+
+# Use model to predict next state given previous state's prediction
+n = 1
+# Predict first state
+x_new = val_data_tensor[0:n,:input_dim].float().to(device)
+print(len(x_new))
+# Generate first prediction
+y_new = val_data_tensor[0:n,input_dim:].float().to(device)
+print(len(y_new))
+
+print('len validation',len(x_val))
+
+# Store generated predictions
+y_gen = list()
+# Loop over validation set
+for n in range(1,len(x_val)):
+    # Predict next state using trained model
+    y_next, losses = validation(model, x=x_new, y=y_new, criterion = loss_criterion)
+    # print('y_next:', 1*(np.array(y_next)>0.5), np.sum(np.array(y_next)), len(y_next))
+
+    # Update new input to be the prediction of the previous state
+    x_new = torch.from_numpy(1*(np.array(y_next)>0.5)).float().to(device)
+
+    # Update ground truth
+    y_new = val_data_tensor[n-1:n,input_dim:].float().to(device)
+    # print('y_new:',np.sum(np.array(y_new)), len(y_new))
+
+    # Store generated predictions
+    y_gen.append( (y_next>0.5).float().numpy() )
+
+print('-----------------------------------------------------------------------')
+
+# Convert to binary
+gen_data = torch.from_numpy(1*(np.array(y_gen)>0.5)).float().to(device)
+print(gen_data)
+print(np.sum(1*(np.array(y_gen)>0.5),0))
+
+print(gen_data.shape)
+# Reshape [n x d]
+gen_data = gen_data.view((len(y_gen),input_dim),-1)
+print('reshaped:',gen_data.shape)
+
+losses_new = list()
+print('-----------------------------------------------------------------------')
+for n in range(1,len(x_val)-1):
+    x_new = gen_data[0:n].float().to(device)
+    y_new = val_data_tensor[0:n,input_dim:].float().to(device)
+    # Predict next state using trained model
+    y_next, losses = validation(model, x=x_new, y=y_new, criterion = loss_criterion)
+    # print('y_next:', 1*(np.array(y_next)>0.5), np.sum(np.array(y_next)), len(y_next))
+    losses_new.append(losses)
+
+fig = plt.figure(figsize=(7,7))
+plt.plot(np.arange(0,100,100/len(losses_new)),losses_new)
+plt.close()
+fig.savefig('figure2.png')
