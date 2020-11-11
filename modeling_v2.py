@@ -21,7 +21,7 @@ data = np.concatenate((ts_spikes,ts_voltage),axis=1)
 print('shape of input matrix:',data.shape)
 
 # Use this to analyze a subset of data
-data_subset = data[:100,:]
+data_subset = data[:10000,:]
 print("size of subset:",data_subset.shape)
 
 X = data_subset
@@ -159,11 +159,11 @@ print('number of changes in training set:',np.sum(np.array(y_true),axis=1))
 
 # Set number of epochs
 ep = 100
-
+bsize = 1000
 #print('epochs:',ep)
 #print('len x:',len(x)/5, int(len(x)/5))
 
-y_pred, losses = train(model, batch_size=10, epochs=ep, x=x, y=y_true, optimizer=optimizer, criterion = loss_criterion)
+y_pred, losses = train(model, batch_size=bsize, epochs=ep, x=x, y=y_true, optimizer=optimizer, criterion = loss_criterion)
 train_loss = losses
 torch.cuda.empty_cache()
 
