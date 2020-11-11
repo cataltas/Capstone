@@ -21,7 +21,8 @@ data = np.concatenate((ts_spikes,ts_voltage),axis=1)
 print('shape of input matrix:',data.shape)
 
 # Use this to analyze a subset of data
-data_subset = data[:10000,:]
+subset_size = 100
+data_subset = data[:subset_size,:]
 print("size of subset:",data_subset.shape)
 
 X = data_subset
@@ -63,7 +64,7 @@ val_data_tensor, test_data_tensor = data_tensor[:val_length].float(),data_tensor
 
 input_dim = 7020
 output_dim = 7020
-hidden_dim = 500
+hidden_dim = 50000
 print('input, output, hidden dim:',input_dim,output_dim,hidden_dim)
 
 # Define model
@@ -159,7 +160,9 @@ print('number of changes in training set:',np.sum(np.array(y_true),axis=1))
 
 # Set number of epochs
 ep = 100
-bsize = 1000
+bsize = int(subset_size//5)
+print('batch size',bsize)
+
 #print('epochs:',ep)
 #print('len x:',len(x)/5, int(len(x)/5))
 
@@ -177,7 +180,7 @@ print('number of changes in validation set:',np.sum(np.array(y_val_true),axis=1)
 
 fig = plt.figure(figsize=(7,7))
 plt.plot(np.arange(0,100,100/len(train_loss)),train_loss)
-plt.close()
+#plt.close()
 fig.savefig('figure.png')
 
 # Use model to predict next state given previous state's prediction
@@ -233,5 +236,5 @@ for n in range(1,len(x_val)-1):
 
 fig = plt.figure(figsize=(7,7))
 plt.plot(np.arange(0,100,100/len(losses_new)),losses_new)
-plt.close()
+#plt.close()
 fig.savefig('figure2.png')
