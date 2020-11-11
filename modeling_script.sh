@@ -1,7 +1,7 @@
 #!/bin/bash
 
-#SBATCH --gres=gpu:1
-##SBATCH --cpus-per-task=1
+##SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=1
 #SBATCH --nodes=1
 #SBATCH --job-name=modeling
 #SBATCH --mem=100GB
@@ -12,6 +12,6 @@
 #command line argument
 cd /scratch/fg746/capstone/Capstone
 source setup.sh
+export MPLBACKEND="pdf"
 #conda activate cap_env
-python -u modeling.py
-
+python -u modeling_v2.py
