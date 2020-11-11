@@ -21,7 +21,7 @@ data = np.concatenate((ts_spikes,ts_voltage),axis=1)
 print('shape of input matrix:',data.shape)
 
 # Use this to analyze a subset of data
-subset_size = 100
+subset_size = 10000
 data_subset = data[:subset_size,:]
 print("size of subset:",data_subset.shape)
 
@@ -212,20 +212,22 @@ for n in range(1,len(x_val)):
     # Store generated predictions
     y_gen.append( (y_next>0.5).float().numpy() )
 
-print('-----------------------------------------------------------------------')
+print('generate a new input to model based on iterative predictions')
 
-# Convert to binary
+# Convert predictions to binary
 gen_data = torch.from_numpy(1*(np.array(y_gen)>0.5)).float().to(device)
-print(gen_data)
-print(np.sum(1*(np.array(y_gen)>0.5),0))
+#print(gen_data)
+#print(np.sum(1*(np.array(y_gen)>0.5),0))
 
-print(gen_data.shape)
+#print(gen_data.shape)
 # Reshape [n x d]
 gen_data = gen_data.view((len(y_gen),input_dim),-1)
 print('reshaped:',gen_data.shape)
 
+# Store losses
 losses_new = list()
-print('-----------------------------------------------------------------------')
+print('validate input made up of n successive states')
+# Loop over number of successive steps
 for n in range(1,len(x_val)-1):
     x_new = gen_data[0:n].float().to(device)
     y_new = val_data_tensor[0:n,input_dim:].float().to(device)
