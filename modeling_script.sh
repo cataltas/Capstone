@@ -10,8 +10,8 @@
 #SBATCH --time=7-00:00:00
 
 #command line argument
-cd /scratch/fg746/capstone/Capstone
+cd /scratch/tn709/capstone/Capstone
 source setup.sh
 export MPLBACKEND="pdf"
 #conda activate cap_env
-python -u modeling_v2.py
+python -u modeling_v2.py 50000 1000 100 0.001
