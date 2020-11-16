@@ -10,6 +10,7 @@ from torch.utils.data import random_split
 # from sklearn.utils import resample
 import matplotlib.pyplot as plt
 import sys
+import pandas as pd
 
 hidden_dim = sys.argv[1]
 bsize = sys.argv[2]
@@ -24,25 +25,20 @@ print( 'hidden dime:', hidden_dim, 'batch size:', bsize, 'epoch:', ep, 'learning
 
 print('loading data')
 # Eric Jonas: I highly recommend mmapping-in the files -- not necessary for the small one but the others are 20+ GB
-ts_spikes = np.load("donkeykong.5000.ts.spikes.npy", mmap_mode='r')
-ts_voltage = np.load("donkeykong.5000.ws.spikes.npy", mmap_mode='r')
-print(ts_spikes[0], flush = True)
-print(ts_voltage[0],flush =True)
-print("sizes of ts, vs matrices:",ts_spikes.shape, ts_voltage.shape)
+X = pd.read_csv('X_train.csv')
+y = pd.read_csv('y_train.csv')
+X = X.sort_values(by  = 'time')
+y = y.sort_values(by = 'time')
+assert np.max(X['time']) == np.max(y['time'])
+X = X.drop(['time'], axis = 1)
+y = y.drop(['time'], axis = 1)
+X_tensor = torch.from_numpy(np.array(X)).float()
+y_tensor = torch.from_numpy(np.array(y)).float()
+assert len(X_tensor) == len(y_tensor)
+assert X_tensor.size()[1] == 1877
+assert y_tensor.size()[1] == 4385
+print("X and y shape:", X_tensor.size(), y_tensor.size())
 print('done loading')
-
-# Shape: (num_steps x num_transistors)
-data = np.concatenate((ts_spikes,ts_voltage),axis=1)
-print('shape of input matrix:',data.shape)
-
-# Use this to analyze a subset of data
-subset_size = 10000
-data_subset = data[:subset_size,:]
-print("size of subset:",data_subset.shape)
-
-X = data_subset
-y = data_subset[1:,:]
-y = np.vstack([y, X[len(X)-1,:]])
 
 # Set up device
 cuda = torch.cuda.is_available()
@@ -59,26 +55,28 @@ if cuda:
     torch.backends.cudnn.benchmark = False
     torch.backends.cudnn.deterministic = True
 
-data_tensor = torch.from_numpy(np.concatenate((X,y),axis=1)).float()
-print('Data Tensor shape:',data_tensor.shape)
 
 # Train, val, test
 train_ratio = 0.6
 validation_ratio = 0.2
 test_ratio = 0.2
 
-train_length = int(np.floor(train_ratio*len(data_tensor)))
-train_length_2 = int(np.ceil((1-train_ratio)*len(data_tensor)))
+train_length = int(np.floor(train_ratio*len(X_tensor)))
+train_length_2 = int(np.ceil((1-train_ratio)*len(y_tensor)))
 
-train_data_tensor, val_data_tensor = data_tensor[:train_length].float(),data_tensor[train_length_2:].float()
+X_train_data_tensor, X_val_data_tensor = X_tensor[:train_length].float(),X_tensor[train_length_2:].float()
+y_train_data_tensor, y_val_data_tensor = y_tensor[:train_length].float(),y_tensor[train_length_2:].float()
+print('x_val_size', X_val_data_tensor.size())
+val_length = int(np.floor(0.5*len(X_val_data_tensor)))
+val_length_2 = int(np.ceil(0.5*len(X_val_data_tensor)))
+print('lengths', train_length, train_length_2, val_length, val_length_2)
+X_val_data_tensor, X_test_data_tensor = X_tensor[:val_length].float(),X_tensor[val_length_2:].float()
+y_val_data_tensor, y_test_data_tensor = y_tensor[:val_length].float(),y_tensor[val_length_2:].float()
+print('X train, val, test sizes:', X_train_data_tensor.size(), X_val_data_tensor.size(), X_test_data_tensor.size())
+print('y train, val, test sizes:', y_train_data_tensor.size(), y_val_data_tensor.size(), y_test_data_tensor.size())
 
-val_length = int(np.floor(0.5*len(val_data_tensor)))
-val_length_2 = int(np.ceil(0.5*len(val_data_tensor)))
-
-val_data_tensor, test_data_tensor = data_tensor[:val_length].float(),data_tensor[val_length_2:].float()
-
-input_dim = 7020
-output_dim = 7020
+input_dim = 1877
+output_dim = 4385
 #hidden_dim = 50000
 print('input, output, hidden dim:',input_dim,output_dim,hidden_dim)
 
@@ -102,7 +100,9 @@ loss_criterion = nn.BCELoss()
 
 # Training loop
 def train(model, batch_size, epochs, x, y, x_val, y_val, optimizer, criterion):
-
+    print('inside train loop sizes:', x.size(), y.size(), x_val.size(), y_val.size())
+    x, y = x.to(device), y.to(device)
+    x_val, y_val = x_val.to(device), y_val.to(device)
     # Set model to training mode
     model.to(device)
     model.train()
@@ -125,14 +125,12 @@ def train(model, batch_size, epochs, x, y, x_val, y_val, optimizer, criterion):
             print('x and y size', x.size(), y.size(), flush =True)
             x_batch = x[b_start:b_end]
             y_batch = y[b_start:b_end]
-            print('x_batch size:', x_batch.size(), flush = True)
-            print('y_batch size:', y_batch.size(), flush = True)
+
             torch.cuda.empty_cache()
             #print('losses',losses)
 
             y_pred = model(x_batch) # logits
             #print('y pred',y_pred)
-            print('y_pred size', y_pred.size(), flush = True)
             loss = criterion(y_pred, y_batch)
             #print('loss',loss)
 
@@ -182,18 +180,16 @@ def validation(model, x, y, criterion):
     return y_pred.detach(), losses
 
 # Training data
-x = train_data_tensor[:,:input_dim].float().to(device)
-y_true = train_data_tensor[:,input_dim:].float().to(device)
-print('y_true size', y_true.size(), train_data_tensor.size(), input_dim)
+x = X_train_data_tensor
+y_true = y_train_data_tensor
 print('number of changes in training set:',np.sum(np.array(y_true),axis=1))
 
 # Set number of epochs
 #ep = 100
 #bsize = int(subset_size//10)
 print('batch size',bsize)
-x_val = val_data_tensor[:,:input_dim].float().to(device)
-y_val_true = val_data_tensor[:,input_dim:].float().to(device)
-print(y_val_true.size())
+x_val = X_val_data_tensor
+y_val_true = y_val_data_tensor
 #print('epochs:',ep)
 #print('len x:',len(x)/5, int(len(x)/5))
 
@@ -215,10 +211,10 @@ plt.savefig('loss.png')
 # Use model to predict next state given previous state's prediction
 n = 1
 # Predict first state
-x_new = val_data_tensor[0:n,:input_dim].float().to(device)
+x_new = X_val_data_tensor[0:n,:].float().to(device)
 print(len(x_new))
 # Generate first prediction
-y_new = val_data_tensor[0:n,input_dim:].float().to(device)
+y_new = y_val_data_tensor[0:n,:].float().to(device)
 print(len(y_new))
 
 print('len validation',len(x_val))
@@ -276,4 +272,4 @@ plt.xlabel('n')
 plt.ylabel('BCELoss')
 plt.title('BCELoss predicting n successive steps')
 #plt.close()
-fig.savefig('figure2.pdf')
+plt.savefig('figure2.png')
