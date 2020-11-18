@@ -62,21 +62,21 @@ test_ratio = 0.2
 
 train_length = int(np.floor(train_ratio*len(X_tensor)))
 
-X_train_data_tensor, X_val_data_tensor = X_tensor[:train_length].float(), X_tensor[train_length+1:].float()
-y_train_data_tensor, y_val_data_tensor = y_tensor[:train_length].float(), y_tensor[train_length+1:].float()
+X_train_data_tensor, X_val_data_tensor = X_tensor[:train_length].float(), X_tensor[train_length:].float()
+y_train_data_tensor, y_val_data_tensor = y_tensor[:train_length].float(), y_tensor[train_length:].float()
 print('X train, val sizes:', X_train_data_tensor.size(), X_val_data_tensor.size())
 print('y train, val sizes:', y_train_data_tensor.size(), y_val_data_tensor.size())
 
 val_length = int(np.floor(0.5*len(X_val_data_tensor)))
 
-X_val_data_tensor, X_test_data_tensor = X_tensor[train_length+1:train_length+val_length].float(), X_tensor[train_length+val_length+1:train_length+2*val_length].float()
-y_val_data_tensor, y_test_data_tensor = y_tensor[train_length+1:train_length+val_length].float(), y_tensor[train_length+val_length+1:train_length+2*val_length].float()
+X_val_data_tensor, X_test_data_tensor = X_tensor[train_length:train_length+val_length].float(), X_tensor[train_length+val_length:train_length+2*val_length].float()
+y_val_data_tensor, y_test_data_tensor = y_tensor[train_length:train_length+val_length].float(), y_tensor[train_length+val_length:train_length+2*val_length].float()
 print('X train, val, test sizes:', X_train_data_tensor.size(), X_val_data_tensor.size(), X_test_data_tensor.size())
 print('y train, val, test sizes:', y_train_data_tensor.size(), y_val_data_tensor.size(), y_test_data_tensor.size())
 
 print('indices train:', 0, train_length)
-print('indices val:', train_length+1, train_length+val_length)
-print('indices test:', train_length+val_length+1, train_length+2*val_length)
+print('indices val:', train_length, train_length+val_length)
+print('indices test:', train_length+val_length, train_length+2*val_length)
 
 input_dim = 1877
 output_dim = 4385
