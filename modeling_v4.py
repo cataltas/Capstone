@@ -1,4 +1,4 @@
-# Usage: python -u modeling_v3.py hidden_dim bsize ep LR
+# Usage: python -u modeling_v4.py hidden_dim bsize ep LR
 #!/bin/bash
 
 # Import packages
