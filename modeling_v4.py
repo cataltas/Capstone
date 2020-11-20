@@ -42,39 +42,21 @@ def train_val_test_split(X_tensor, y_tensor):
 
     val_length = int(np.floor(0.5*len(X_val_data_tensor)))
 
-<<<<<<< HEAD
     X_val_data_tensor, X_test_data_tensor = X_tensor[train_length:train_length+val_length].float(), X_tensor[train_length+val_length:train_length+2*val_length].float()
     y_val_data_tensor, y_test_data_tensor = y_tensor[train_length:train_length+val_length].float(), y_tensor[train_length+val_length:train_length+2*val_length].float()
     print('X train, val, test sizes:', X_train_data_tensor.size(), X_val_data_tensor.size(), X_test_data_tensor.size())
     print('y train, val, test sizes:', y_train_data_tensor.size(), y_val_data_tensor.size(), y_test_data_tensor.size())
-=======
-X_train_data_tensor, X_val_data_tensor = X_tensor[:train_length].float(), X_tensor[train_length:].float()
-y_train_data_tensor, y_val_data_tensor = y_tensor[:train_length].float(), y_tensor[train_length:].float()
-print('X train, val sizes:', X_train_data_tensor.size(), X_val_data_tensor.size())
-print('y train, val sizes:', y_train_data_tensor.size(), y_val_data_tensor.size())
->>>>>>> 2d2810ac7cbe4479215ff214ac87b9af06f05249
 
     print('indices train:', 0, train_length)
     print('indices val:', train_length, train_length+val_length)
     print('indices test:', train_length+val_length, train_length+2*val_length)
 
-<<<<<<< HEAD
     return X_train_data_tensor, y_train_data_tensor, X_val_data_tensor, y_val_data_tensor, X_test_data_tensor, y_test_data_tensor
 
 def set_params(model):
     import torch
     from torch import nn
     from torch import optim
-=======
-X_val_data_tensor, X_test_data_tensor = X_tensor[train_length:train_length+val_length].float(), X_tensor[train_length+val_length:train_length+2*val_length].float()
-y_val_data_tensor, y_test_data_tensor = y_tensor[train_length:train_length+val_length].float(), y_tensor[train_length+val_length:train_length+2*val_length].float()
-print('X train, val, test sizes:', X_train_data_tensor.size(), X_val_data_tensor.size(), X_test_data_tensor.size())
-print('y train, val, test sizes:', y_train_data_tensor.size(), y_val_data_tensor.size(), y_test_data_tensor.size())
-
-print('indices train:', 0, train_length)
-print('indices val:', train_length, train_length+val_length)
-print('indices test:', train_length+val_length, train_length+2*val_length)
->>>>>>> 2d2810ac7cbe4479215ff214ac87b9af06f05249
 
     params = list(model.parameters())
 
