@@ -16,23 +16,25 @@ label_6507 = []
 for i in range(y_next_sim6507.shape[0]):
   label_6507.append(sum(y_next_sim6507.iloc[i]!=y_sim6507.iloc[i]))
 
-plt.hist(label_6507)
-plt.ylabel("Number of Occurences")
-plt.xlabel("Number of Wires which Changed States")
-plt.title("Histogram of the Number of Wires which Changed States after one Step for Sim6507")
-plt.savefig("sim6507_hist1.png")
-plt.show()
+fig, axs = plt.subplots(2)
+fig.suptitle('Histogram of the Number of Wires which Changed States after one Step')
+axs[0].hist(label_6507)
+axs[0].ylabel("Number of Occurences")
+axs[0].xlabel("Number of Wires which Changed States")
+axs[0].title("Sim6507")
+axs[0].savefig("sim6507_hist1.png")
+axs[0].show()
 
 label_tia = []
 for i in range(y_next_simTIA.shape[0]):
   label_tia.append(sum(y_next_simTIA.iloc[i]!=y_simTIA.iloc[i]))
   
-plt.hist(label_tia)
-plt.ylabel("Number of Occurences")
-plt.xlabel("Number of Wires which Changed States")
-plt.title("Histogram of the Number of Wires which Changed States after one Step for SimTIA")
-plt.savefig("simtia_hist1.png")
-plt.show()
+axs[1].hist(label_tia)
+axs[1].ylabel("Number of Occurences")
+axs[1].xlabel("Number of Wires which Changed States")
+axs[1].title("SimTIA")
+axs[1].savefig("simtia_hist1.png")
+axs[1].show()
 
 
 
