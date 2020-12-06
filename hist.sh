@@ -3,7 +3,7 @@
 ##SBATCH --gres=gpu:1
 #SBATCH --cpus-per-task=1
 #SBATCH --nodes=1
-#SBATCH --job-name=modeling
+#SBATCH --job-name=hist
 #SBATCH --mem=100GB
 #SBATCH --mail-type=END
 #SBATCH --output=slurm_%j.out
