@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 y = pd.read_csv("y.csv")
 y_next = y.iloc[1:y.shape[0]]
 
+print(y.shape)
 y_sim6507=y[:,0:1725]
 y_next_sim6507 = y_next[:,0:1725]
 y_simTIA=y[:,1725:y.shape[1]]
