@@ -1,5 +1,5 @@
 import pandas as pd 
-import matplotlib as plt 
+import matplotlib.pyplot as plt 
 
 y = pd.read_csv("y.csv")
 y_next = y.iloc[1:y.shape[0]]
@@ -32,5 +32,7 @@ plt.xlabel("Number of Wires which Changed States")
 plt.title("Histogram of the Number of Wires which Changed States after one Step for SimTIA")
 plt.savefig("simtia_hist1.png")
 plt.show()
+
+
 
 
