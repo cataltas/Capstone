@@ -9,3 +9,7 @@ The labels for all three plots have been encoded such that each unique array has
 The dataset used for this data visualisation is that of Eric Jonas' github repository. We will re-run these experiments once we have our actual dataset. 
 
 Take aways: These plots are hard to interpret due to the fact that we have a disproportional amount of steps where all the transistors are off. 
+
+Modeling script usage:
+  
+  ```python -u modeling_v4.py hidden_dim bsize ep LR```
