@@ -1,6 +1,6 @@
-# Usage: python -u modeling_v4.py hidden_dim bsize ep LR
 #!/bin/bash
 
+# Usage: python -u modeling_v4.py hidden_dim bsize ep LR
 # Import packages
 import matplotlib.pyplot as plt
 import pandas as pd
