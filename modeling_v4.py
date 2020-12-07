@@ -195,15 +195,15 @@ def predict_multiple_steps(X_val_data_tensor, y_val_data_tensor, num_steps, emu_
     # Use model to predict next state given previous state's prediction
     n = 1
     # Predict first state
-    x_new_6507 = X_val_data_tensor[0:n,emu_len:emu_len+chip_len].float() # [n,1877] -> [n,1725]
-    x_new_emu = X_val_data_tensor[0:n,:emu_len].float() # [n,1877] -> [n,152]
-    x_new = np.concatenate((x_new_emu, x_new_6507), axis=1) # [n,1877]
+    x_new_6507 = X_val_data_tensor[0:n,emu_len:emu_len+chip_len].float()
+    x_new_emu = X_val_data_tensor[0:n,:emu_len].float()
+    x_new = np.concatenate((x_new_emu, x_new_6507), axis=1)
     print('shape of new input',x_new.shape)
     x_new = torch.from_numpy(1*(np.array(x_new)>0.5)).float()
     x_new = x_new.to(device)
 
     # Generate first prediction
-    y_new = y_val_data_tensor[0:n,:].float()  # [n,4385]
+    y_new = y_val_data_tensor[0:n,:].float()
     y_new = y_new.to(device)
     print(len(y_new))
 
@@ -220,10 +220,10 @@ def predict_multiple_steps(X_val_data_tensor, y_val_data_tensor, num_steps, emu_
         # print('y_next:', 1*(np.array(y_next)>0.5), np.sum(np.array(y_next)), len(y_next))
 
         # Update new input to be the prediction of the previous state
-        x_new_6507 = y_next[:, :chip_len].float().to(device) # [n,4385] -> [n,1725]
-        x_new_emu = X_val_data_tensor[n:n+1, :emu_len].float().to(device) # [1,1877] -> [1,152]
+        x_new_6507 = y_next[:, :chip_len].float().to(device)
+        x_new_emu = X_val_data_tensor[n:n+1, :emu_len].float().to(device)
         print('shapes of emu and 6507',x_new_emu.shape, x_new_6507.shape)
-        x_new = torch.cat((x_new_emu, x_new_6507), dim=1) # [1,1877]
+        x_new = torch.cat((x_new_emu, x_new_6507), dim=1)
         print('shape of new input',x_new.shape)
         x_new = x_new.cpu()
         x_new = torch.from_numpy(1*(np.array(x_new)>0.5)).float()
@@ -247,16 +247,16 @@ def predict_multiple_steps(X_val_data_tensor, y_val_data_tensor, num_steps, emu_
 
     # Predict first state
     # Get first row of EMU
-    x_input_emu = X_val_data_tensor[:n, :emu_len].float() # size: [1,1877] -> [1,152]
+    x_input_emu = X_val_data_tensor[:n, :emu_len].float()
     # Get first row of 6507
-    x_input_6507 = X_val_data_tensor[:n, emu_len:emu_len+chip_len].float() # size:  [1,1877] -> [1,1725]
-    x_new = np.concatenate((x_input_emu, x_input_6507), axis=1) # size: [1,152] & [1,1725] -> [1,1877]
+    x_input_6507 = X_val_data_tensor[:n, emu_len:emu_len+chip_len].float()
+    x_new = np.concatenate((x_input_emu, x_input_6507), axis=1)
     print('shape of first input',x_new.shape)
     x_new = torch.from_numpy(1*(np.array(x_new)>0.5)).float()
     x_new = x_new.to(device)
 
     # Generate first prediction
-    y_new = y_val_data_tensor[:n,:].float()  # size: [1,4385]
+    y_new = y_val_data_tensor[:n,:].float()
     y_new = y_new.to(device)
     # print(len(y_new))
 
@@ -270,12 +270,12 @@ def predict_multiple_steps(X_val_data_tensor, y_val_data_tensor, num_steps, emu_
         # y_next has shape [n,4385], first 1725 rows are the 6507 outputs
 
         # Update new input to be the prediction of the previous state
-        x_new_emu = (X_val_data_tensor[ :n, :emu_len]).to(device) # size: [n,1877] -> [n,152]
+        x_new_emu = (X_val_data_tensor[ :n, :emu_len]).to(device)
         x_row_1 = (X_val_data_tensor[ :1, emu_len:emu_len+chip_len]).to(device)
         y_next_1 = y_next[ :n, :chip_len].float().to(device)
-        x_new_6507 = torch.cat( (x_row_1, y_next_1), axis=0) # size: [n,4385] -> [n,1725]
+        x_new_6507 = torch.cat( (x_row_1, y_next_1), axis=0)
         print('shapes of emu and 6507', x_new_emu.shape, x_new_6507.shape)
-        x_new = torch.cat((x_new_emu, x_new_6507), dim=1) # size: [1,1877]
+        x_new = torch.cat((x_new_emu, x_new_6507), dim=1)
         print('shape of new input', x_new.shape)
         x_new = torch.from_numpy(1*(np.array(x_new.cpu())>0.5)).float()
         x_new = x_new.to(device)
