@@ -275,7 +275,7 @@ def predict_multiple_steps(X_val_data_tensor, y_val_data_tensor, num_steps, emu_
         y_next_1 = y_next[ :n, :chip_len].float().to(device)
         x_new_6507 = torch.cat( (x_row_1, y_next_1), axis=0) # [n,4385] -> [n,1725]
         print('shapes of emu and 6507', x_new_emu.shape, x_new_6507.shape)
-        x_new = torch.cat((x_new_emu, x_new_6507), dim=1) # [1,1877]
+        x_new = torch.cat((x_new_emu, x_new_6507), dim=1) # size: [1,1877]
         print('shape of new input', x_new.shape)
         x_new = torch.from_numpy(1*(np.array(x_new.cpu())>0.5)).float()
         x_new = x_new.to(device)
