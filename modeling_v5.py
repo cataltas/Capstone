@@ -189,7 +189,7 @@ def plot_losses(train_losses, val_losses):
     plt.savefig('loss_hdim{}_bs{}_ep{}_lr{}.png'.format(hidden_dim,bsize,ep,LR))
     return None
 
-def predict_multiple_steps():
+def predict_multiple_steps_old():
     # Use model to predict next state given previous state's prediction
     n = 1
     # Predict first state
@@ -266,6 +266,7 @@ if __name__ == "__main__":
 
     import sys
     import numpy as np
+    from modeling_v4 import predict_multiple_steps 
 
     hidden_dim = sys.argv[1]
     bsize = sys.argv[2]
@@ -313,3 +314,4 @@ if __name__ == "__main__":
     y_pred, y_val_pred, train_losses, val_losses = train(model, batch_size=bsize, epochs=ep, x=x, y=y_true, x_val = x_val, y_val = y_val_true, optimizer=optimizer, criterion = loss_criterion)
     torch.cuda.empty_cache()
     plot_losses(train_losses, val_losses)
+    predict_multiple_steps(X_val_data_tensor, y_val_data_tensor, 2000)
