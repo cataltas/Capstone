@@ -17,6 +17,8 @@ label_6507 = []
 for i in range(y_next_sim6507.shape[0]):
   label_6507.append(sum(y_next_sim6507.iloc[i]!=y_sim6507.iloc[i]))
 
+print(np.unique(label_6507))
+
 fig, axs = plt.subplots(2,1,figsize=(15,15))
 fig.suptitle('Histogram of the Number of Wires which Changed States after one Step')
 axs[0].hist(label_6507,bins=20)
