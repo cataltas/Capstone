@@ -1,5 +1,5 @@
-# Usage: python -u modeling_v4.py hidden_dim bsize ep LR
 #!/bin/bash
+# Usage: python -u modeling_v5.py hidden_dim bsize ep LR
 
 # Import packages
 import matplotlib.pyplot as plt
@@ -23,10 +23,6 @@ def load_data():
     X_tensor = torch.from_numpy(np.array(X)).float()
     y_tensor = torch.from_numpy(np.array(y)).float()
     assert len(X_tensor) == len(y_tensor)
-    #assert X_tensor.size()[1] == 1877
-    #assert y_tensor.size()[1] == 4385
-
-
 
     print("X and y shape:", X_tensor.size(), y_tensor.size())
     print('done loading')
@@ -103,7 +99,7 @@ def train(model, batch_size, epochs, x, y, x_val, y_val, optimizer, criterion):
     model.to(device)
     model.train()
 
-    num_batches = (len(x)+batch_size-1) // batch_size # floor operator
+    num_batches = (len(x)+batch_size-1) // batch_size
     print('number of batches:',num_batches)
     losslists = []
     vlosslists = []
@@ -116,18 +112,15 @@ def train(model, batch_size, epochs, x, y, x_val, y_val, optimizer, criterion):
 
             b_start = b * batch_size
             b_end = (b + 1) * batch_size
-            #print('b_start and b_end:', b_start, b_end, flush = True)
-            #print('x and y size', x.size(), y.size(), flush =True)
+
             x_batch = x[b_start:b_end]
             y_batch = y[b_start:b_end]
 
             torch.cuda.empty_cache()
 
             y_pred = model(x_batch) # logits
-            #pd.DataFrame(y_pred).to_csv('prediction_{}.csv'.format(b))
-            #print('y pred',y_pred.cpu())
+
             loss = criterion(y_pred, y_batch)
-            #print('loss',loss)
 
             model.zero_grad()
 
@@ -136,7 +129,7 @@ def train(model, batch_size, epochs, x, y, x_val, y_val, optimizer, criterion):
             optimizer.step()
 
             losses.append(loss.item())
-            # print(loss.item(), losses)
+
         losslists.append(np.mean(losses))
         print('Training loss: {}, {}'.format(loss.item(), torch.tensor(losses).mean() ))
 
@@ -150,6 +143,17 @@ def train(model, batch_size, epochs, x, y, x_val, y_val, optimizer, criterion):
             vloss = criterion(y_pred_val, y_val)
 
             vlosses.append(vloss.item())
+
+            # Save the best model
+            if epoch == 0:
+                best_loss = vloss.item()
+            else:
+                if vloss.item()<best_loss:
+                    best_model = model
+                    filename = 'model_hdim{}_bs{}_ep{}_lr{}.pt'.format(hidden_dim, bsize, ep, LR)
+                    plot_losses(losses,vlosses)
+                    torch.save(best_model.state_dict(), 'model.pt')
+
         vlosslists.append(torch.tensor(vlosses).mean())
 
         print('Validation loss: {}, {}'.format(vloss.item(), torch.tensor(vlosses).mean() ))
@@ -185,11 +189,11 @@ def plot_losses(train_losses, val_losses):
     plt.plot(val_losses)
     plt.title('Train & Validation Loss')
     plt.legend(['Train', 'Validation'], loc='upper right')
-    plt.title('Trainning and Validation Losses')
+    plt.title('Training and Validation Losses')
     plt.savefig('loss_hdim{}_bs{}_ep{}_lr{}.png'.format(hidden_dim,bsize,ep,LR))
     return None
 
-def predict_multiple_steps_old():
+def predict_multiple_steps():
     # Use model to predict next state given previous state's prediction
     n = 1
     # Predict first state
@@ -266,7 +270,6 @@ if __name__ == "__main__":
 
     import sys
     import numpy as np
-    from modeling_v4 import predict_multiple_steps 
 
     hidden_dim = sys.argv[1]
     bsize = sys.argv[2]
@@ -314,4 +317,3 @@ if __name__ == "__main__":
     y_pred, y_val_pred, train_losses, val_losses = train(model, batch_size=bsize, epochs=ep, x=x, y=y_true, x_val = x_val, y_val = y_val_true, optimizer=optimizer, criterion = loss_criterion)
     torch.cuda.empty_cache()
     plot_losses(train_losses, val_losses)
-    predict_multiple_steps(X_val_data_tensor, y_val_data_tensor, 2000)
