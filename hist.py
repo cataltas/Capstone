@@ -11,7 +11,7 @@ y_next_sim6507 = y_next.iloc[:,1:1725]
 y_simTIA=y.iloc[:,1726:y.shape[1]]
 y_next_simTIA = y_next.iloc[:,1726:y.shape[1]]
 
-print(y_simTIA.iloc[:,2462])
+print(y_simTIA.iloc[:,2460:2464])
 
 
 # label_6507 = []
