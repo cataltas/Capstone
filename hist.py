@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt 
 import numpy as np
 
-y = pd.read_csv("y.csv")
+y = pd.read_csv("y.csv",index_col=False)
 y_next = y.iloc[1:y.shape[0]]
 
 print(y.shape)
