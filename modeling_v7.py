@@ -104,6 +104,7 @@ def train(model, batch_size, epochs, x, y, x_val, y_val, x_test, y_test, optimiz
     print('number of batches:',num_batches)
     losslists = []
     vlosslists = []
+    tlosslists = []
     for epoch in range(epochs):
 
         torch.cuda.empty_cache()
