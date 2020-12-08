@@ -43,7 +43,7 @@ label_2_6507= np.concatenate(label_2_6507,axis=0)
 
 fig2, axs2 = plt.subplots(2,1,figsize=(15,15))
 fig2.suptitle('Histogram of the Number of Times Each Wire Changed State')
-axs2[0].hist(label_6507)
+axs2[0].hist(label_2_6507)
 axs2[0].set_ylabel("Number of Times Changed")
 axs2[0].set_xlabel("Wires")
 axs2[0].set_title("Sim6507")
