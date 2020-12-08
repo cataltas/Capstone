@@ -4,13 +4,15 @@ import numpy as np
 
 y = pd.read_csv("y.csv",index_col=False)
 y_next = y.iloc[1:y.shape[0]]
-print(y.iloc[:,0])
 
 
-# y_sim6507=y.iloc[:,1:1725]
-# y_next_sim6507 = y_next.iloc[:,1:1725]
-# y_simTIA=y.iloc[:,1726:y.shape[1]]
-# y_next_simTIA = y_next.iloc[:,1726:y.shape[1]]
+y_sim6507=y.iloc[:,1:1725]
+y_next_sim6507 = y_next.iloc[:,1:1725]
+y_simTIA=y.iloc[:,1726:y.shape[1]]
+y_next_simTIA = y_next.iloc[:,1726:y.shape[1]]
+
+print(y_simTIA.iloc[:,2462])
+
 
 # label_6507 = []
 # for i in range(y_next_sim6507.shape[0]):
