@@ -17,7 +17,7 @@ label_6507 = []
 for i in range(y_next_sim6507.shape[0]):
   label_6507.append(sum(y_next_sim6507.iloc[i]!=y_sim6507.iloc[i]))
 
-(unique, counts) = numpy.unique(label_6507, return_counts=True)
+(unique, counts) = np.unique(label_6507, return_counts=True)
 print((unique, counts))
 
 fig, axs = plt.subplots(2,1,figsize=(15,15))
@@ -31,7 +31,7 @@ label_tia = []
 for i in range(y_next_simTIA.shape[0]):
   label_tia.append(sum(y_next_simTIA.iloc[i]!=y_simTIA.iloc[i]))
 
-(unique, counts) = numpy.unique(label_tia, return_counts=True)
+(unique, counts) = np.unique(label_tia, return_counts=True)
 print((unique, counts))
   
 axs[1].hist(label_tia,bins=20)
@@ -45,7 +45,7 @@ for i in range(y_next_sim6507.shape[0]):
     label_2_6507.append(np.where(y_next_sim6507.iloc[i,:]!=y_sim6507.iloc[i,:])[0])
 label_2_6507= np.concatenate(label_2_6507,axis=0)
 
-(unique, counts) = numpy.unique(label_2_6507, return_counts=True)
+(unique, counts) = np.unique(label_2_6507, return_counts=True)
 print((unique, counts))
 
 fig2, axs2 = plt.subplots(2,1,figsize=(15,15))
@@ -60,7 +60,7 @@ for i in range(y_next_simTIA.shape[0]):
     label_2_tia.append(np.where(y_next_simTIA.iloc[i,:]!=y_simTIA.iloc[i,:])[0])
 label_2_tia= np.concatenate(label_2_tia,axis=0)
 
-(unique, counts) = numpy.unique(label_2_tia, return_counts=True)
+(unique, counts) = np.unique(label_2_tia, return_counts=True)
 print((unique, counts))
 
 axs2[1].hist(label_2_tia,bins =500)
