@@ -152,7 +152,7 @@ def train(model, batch_size, epochs, x, y, x_val, y_val, optimizer, criterion):
                     best_model = model
                     filename = 'model_hdim{}_bs{}_ep{}_lr{}.pt'.format(hidden_dim, bsize, ep, LR)
                     plot_losses(losses,vlosses)
-                    torch.save(best_model.state_dict(), 'model.pt')
+                    torch.save(best_model.state_dict(), filename)
 
         vlosslists.append(torch.tensor(vlosses).mean())
 
