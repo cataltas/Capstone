@@ -87,7 +87,7 @@ def define_model(input_dim, output_dim, hidden_dim):
     return model
 
 # Training loop
-def train(model, batch_size, epochs, x, y, x_val, y_val, x_test, y_test, optimizer, criterion):
+def train(model, batch_size, epochs, x, y, x_val, y_val, optimizer, criterion):
     import torch
     from torch import nn
     from torch import optim
@@ -95,7 +95,6 @@ def train(model, batch_size, epochs, x, y, x_val, y_val, x_test, y_test, optimiz
     print('inside train loop sizes:', x.size(), y.size(), x_val.size(), y_val.size())
     x, y = x.to(device), y.to(device)
     x_val, y_val = x_val.to(device), y_val.to(device)
-    x_test, y_test = x_test.to(device), y_test.to(device)
 
     model.to(device)
     model.train()
@@ -104,7 +103,8 @@ def train(model, batch_size, epochs, x, y, x_val, y_val, x_test, y_test, optimiz
     print('number of batches:',num_batches)
     losslists = []
     vlosslists = []
-    tlosslists = []
+    filename = ''
+
     for epoch in range(epochs):
 
         torch.cuda.empty_cache()
@@ -133,7 +133,7 @@ def train(model, batch_size, epochs, x, y, x_val, y_val, x_test, y_test, optimiz
             losses.append(loss.item())
 
         losslists.append(np.mean(losses))
-        print('Training loss: {}, {}'.format(loss.item(), torch.tensor(losses).mean() ))
+        print('Epoch {} Training loss: {}, {}'.format(epoch+1, loss.item(), torch.tensor(losses).mean() ))
 
         # Validation
         model.eval()
@@ -151,47 +151,24 @@ def train(model, batch_size, epochs, x, y, x_val, y_val, x_test, y_test, optimiz
             if epoch == 0:
                 best_loss = vloss.item()
             else:
-                if vloss.item()<best_loss:
+                if vloss.item() < best_loss:
+                    print('best vs. current loss:', best_loss, vloss.item())
+                    best_loss = vloss.item()
                     best_model = model
-                    filename = 'model_hdim{}_bs{}_ep{}_lr{}.pt'.format(hidden_dim, bsize, ep, LR)
-                    plot_losses(losses,vlosses,'val')
-                    torch.save(best_model.state_dict(), filename)
+                    filename = 'model_hdim{}_bs{}_ep{}_lr{}.pt'.format(hidden_dim, bsize, epoch+1, LR)
+                    print('filename:',filename)
 
         vlosslists.append(torch.tensor(vlosses).mean())
 
         print('Validation loss: {}, {}'.format(vloss.item(), torch.tensor(vlosses).mean() ))
-
-        # Test
-        tlosses = list()
-
-        with torch.no_grad():
-            y_pred_test = model(x_test)
-
-            tloss = criterion(y_pred_test, y_test)
-
-            tlosses.append(tloss.item())
-
-            # Save the best model
-            if epoch == 0:
-                t_best_loss = tloss.item()
-            else:
-                if tloss.item() < t_best_loss:
-                    best_model = model
-                    filename = 'test_model_hdim{}_bs{}_ep{}_lr{}.pt'.format(hidden_dim, bsize, ep, LR)
-                    plot_losses(losses,tlosses,'test')
-                    torch.save(best_model.state_dict(), filename)
-
-        tlosslists.append(torch.tensor(tlosses).mean())
-
-        print('Test loss: {}, {}'.format(tloss.item(), torch.tensor(tlosses).mean() ))
-        if (epoch+1) % 20 == 0:
-            print('Epoch {} loss: {}, {}'.format(epoch+1, loss.item(), torch.tensor(losses).mean() ))
+        # print('best model path:', filename)
 
         if torch.tensor(losses).mean() < 1e-2:
             print('Epoch {} loss: {}, {}'.format(epoch+1, loss.item(), torch.tensor(losses).mean() ))
             break
 
-    return y_pred.detach(), y_pred_val.detach(), losslists, vlosslists, tlosslists
+    torch.save(best_model.state_dict(), filename)
+    return y_pred.detach(), y_pred_val.detach(), losslists, vlosslists, filename
 
 def validation(model, x, y, criterion):
 
@@ -210,13 +187,33 @@ def validation(model, x, y, criterion):
 
     return y_pred.detach(), losses
 
-def plot_losses(train_losses, val_losses, prefix):
+def test(model_path, x_test, y_test, criterion):
+    # Load the best model
+    model.load_state_dict(torch.load(model_path))
+    model.eval()
+
+    x_test, y_test = x_test.to(device), y_test.to(device)
+
+    # Test
+    with torch.no_grad():
+        y_pred_test = model(x_test)
+        tloss = criterion(y_pred_test, y_test)
+
+    return tloss.item()
+
+def plot_losses(train_losses, val_losses, prefix='val'):
+    if prefix == 'val':
+        str = 'Validation'
+    elif prefix == 'test':
+        str = 'Test'
+    else:
+        str = '?'
     fig = plt.figure(figsize=(7,7))
     plt.plot(train_losses)
     plt.plot(val_losses)
-    plt.title('Train & Validation Loss')
-    plt.legend(['Train', 'Validation'], loc='upper right')
-    plt.title('Training and Validation Losses')
+    plt.title('Train & {} Loss'.format(str))
+    plt.legend(['Train', '{}'.format(str)], loc='upper right')
+    plt.title('Training and {} Losses'.format(str))
     plt.savefig(prefix+'_loss_hdim{}_bs{}_ep{}_lr{}.png'.format(hidden_dim,bsize,ep,LR))
     return None
 
@@ -345,7 +342,9 @@ if __name__ == "__main__":
 
     model = define_model(input_dim = 123, output_dim = 29, hidden_dim=hidden_dim)
     params, optimizer, loss_criterion = set_params(model = model)
-    y_pred, y_val_pred, train_losses, val_losses, test_losses = train(model, batch_size=bsize, epochs=ep, x=x, y=y_true, x_val = x_val, y_val = y_val_true, x_test = x_test, y_test = y_test_true, optimizer=optimizer, criterion = loss_criterion)
+    y_pred, y_val_pred, train_losses, val_losses, best_model_path = train(model, batch_size=bsize, epochs=ep, x=x, y=y_true, x_val = x_val, y_val = y_val_true, optimizer=optimizer, criterion = loss_criterion)
+    print('Best model path:', best_model_path)
     torch.cuda.empty_cache()
     plot_losses(train_losses, val_losses,'val')
-    plot_losses(train_losses, test_losses,'test')
+    tloss  = test(model_path=best_model_path, x_test = x_test, y_test = y_test_true, criterion = loss_criterion)
+    print('Test loss on best model:', tloss)
