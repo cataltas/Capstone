@@ -210,13 +210,19 @@ def validation(model, x, y, criterion):
 
     return y_pred.detach(), losses
 
-def plot_losses(train_losses, val_losses, prefix):
+def plot_losses(train_losses, val_losses, prefix='val'):
+    if prefix == 'val':
+        str = 'Validation'
+    elif prefix == 'test':
+        str = 'Test'
+    else:
+        str = '?'
     fig = plt.figure(figsize=(7,7))
     plt.plot(train_losses)
     plt.plot(val_losses)
-    plt.title('Train & Validation Loss')
-    plt.legend(['Train', 'Validation'], loc='upper right')
-    plt.title('Training and Validation Losses')
+    plt.title('Train & {} Loss'.format(str))
+    plt.legend(['Train', '{}'.format(str)], loc='upper right')
+    plt.title('Training and {} Losses'.format(str))
     plt.savefig(prefix+'_loss_hdim{}_bs{}_ep{}_lr{}.png'.format(hidden_dim,bsize,ep,LR))
     return None
 
