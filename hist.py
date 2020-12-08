@@ -7,8 +7,8 @@ y_next = y.iloc[1:y.shape[0]]
 
 y_sim6507=y.iloc[:,1:1725]
 y_next_sim6507 = y_next.iloc[:,1:1725]
-y_simTIA=y.iloc[:,1725:y.shape[1]]
-y_next_simTIA = y_next.iloc[:,1725:y.shape[1]]
+y_simTIA=y.iloc[:,1726:y.shape[1]]
+y_next_simTIA = y_next.iloc[:,1726:y.shape[1]]
 
 label_6507 = []
 for i in range(y_next_sim6507.shape[0]):
@@ -29,7 +29,7 @@ axs[1].hist(label_tia,bins=10)
 axs[1].set_ylabel("Number of Occurences")
 axs[1].set_xlabel("Number of Wires which Changed States")
 axs[1].set_title("SimTIA")
-fig.savefig("hist1.png")
+fig.savefig("hist1v.png")
 
 label_2_6507= []
 for i in range(y_next_sim6507.shape[0]):
@@ -52,7 +52,7 @@ axs2[1].hist(label_2_tia,bins =500)
 axs2[1].set_ylabel("Number of Times Changed")
 axs2[1].set_xlabel("Wires")
 axs2[1].set_title("SimTIA")
-fig2.savefig("hist2.png")
+fig2.savefig("hist2v.png")
 
 
 
