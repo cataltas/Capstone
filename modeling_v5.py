@@ -71,7 +71,7 @@ def set_params(model):
     optimizer = optim.Adam(model.parameters(), lr=LR)
 
     # Define loss
-    loss_criterion =  nn.BCELoss()
+    loss_criterion =  nn.MSELoss()
 
     return params, optimizer, loss_criterion
 
@@ -82,11 +82,11 @@ def define_model(input_dim, output_dim, hidden_dim):
 
     model = nn.Sequential(
         nn.Linear(input_dim,hidden_dim),
-        nn.Sigmoid(),
+        nn.ReLu(),
         nn.Linear(hidden_dim,hidden_dim),
-        nn.Sigmoid(),
+        nn.ReLu(),
         nn.Linear(hidden_dim,output_dim),
-        nn.Sigmoid()
+        nn.ReLu()
     )
     return model
 
@@ -251,8 +251,8 @@ def predict_multiple_steps(X_val_data_tensor, y_val_data_tensor, num_steps, emu_
     fig = plt.figure(figsize=(20,7))
     plt.plot(losses_list)
     plt.xlabel('n')
-    plt.ylabel('BCELoss')
-    plt.title('BCELoss predicting next step using previous prediction as input')
+    plt.ylabel('MSE Loss')
+    plt.title('MSE Loss predicting next step using previous prediction as input')
     #plt.close()
     plt.savefig('figure2_loss_hdim{}_bs{}_ep{}_lr{}.png'.format(hidden_dim,bsize,ep,LR))
 def predict_multiple_steps_old():
@@ -322,8 +322,8 @@ def predict_multiple_steps_old():
     fig = plt.figure(figsize=(7,7))
     plt.plot(np.arange(0,n,n/len(losses_new)),losses_new)
     plt.xlabel('n')
-    plt.ylabel('BCELoss')
-    plt.title('BCELoss predicting n successive steps')
+    plt.ylabel('MSE Loss')
+    plt.title('MSE Loss predicting n successive steps')
     #plt.close()
     plt.savefig('figure2.png')
     return None
@@ -332,7 +332,7 @@ if __name__ == "__main__":
 
     import sys
     import numpy as np
-    #from modeling_v4 import predict_multiple_steps 
+    #from modeling_v4 import predict_multiple_steps
 
     hidden_dim = sys.argv[1]
     bsize = sys.argv[2]
