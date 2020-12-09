@@ -10,10 +10,10 @@ def load_data():
     # import torch
 
     print('loading data')
-    X = pd.read_csv('X.csv')
-    y = pd.read_csv('y.csv')
-    # X = pd.read_csv('X_downsampled.csv')
-    # y = pd.read_csv('y_downsampled.csv')
+    # X = pd.read_csv('X.csv')
+    # y = pd.read_csv('y.csv')
+    X = pd.read_csv('X_downsampled.csv')
+    y = pd.read_csv('y_downsampled.csv')
     X = X.sort_values(by  = 'time')
     y = y.sort_values(by = 'time')
     assert np.max(X['time']) == np.max(y['time'])
