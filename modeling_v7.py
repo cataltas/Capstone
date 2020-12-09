@@ -8,7 +8,10 @@ import pandas as pd
 def load_data():
     import numpy as np
     import torch
+
     print('loading data')
+    # X = pd.read_csv('X.csv')
+    # y = pd.read_csv('y.csv')
     X = pd.read_csv('X_downsampled.csv')
     y = pd.read_csv('y_downsampled.csv')
     X = X.sort_values(by  = 'time')
@@ -152,7 +155,7 @@ def train(model, batch_size, epochs, x, y, x_val, y_val, optimizer, criterion):
                 best_loss = vloss.item()
             else:
                 if vloss.item() < best_loss:
-                    print('best vs. current loss:', best_loss, vloss.item())
+                    # print('Best loss: {}, Current loss: {}'.format(best_loss, vloss.item()))
                     best_loss = vloss.item()
                     best_model = model
                     filename = 'model_hdim{}_bs{}_ep{}_lr{}.pt'.format(hidden_dim, bsize, epoch+1, LR)
@@ -178,7 +181,7 @@ def validation(model, x, y, criterion):
 
     with torch.no_grad():
         y_pred = model(x)
-        print(y_pred)
+        # print(y_pred)
 
     loss = criterion(y_pred, y)
 
@@ -217,84 +220,72 @@ def plot_losses(train_losses, val_losses, prefix='val'):
     plt.savefig(prefix+'_loss_hdim{}_bs{}_ep{}_lr{}.png'.format(hidden_dim,bsize,ep,LR))
     return None
 
-def predict_multiple_steps():
-    # Use model to predict next state given previous state's prediction
+def predict_multiple_steps(model_path, X_val_data_tensor, y_val_data_tensor, num_steps, emu_len=113, chip_len=10):
+    '''
+    Use model to predict next state given previous state's prediction
+    '''
+
+    # Load the best model
+    model.load_state_dict(torch.load(model_path))
+    model.eval()
+
     n = 1
     # Predict first state
-    x_new = X_val_data_tensor[0:n,:].float()
+    x_new = X_val_data_tensor[0:n, :]
+    print('shape of new input',x_new.shape)
     x_new = x_new.to(device)
-    print(len(x_new))
-    # Generate first prediction
-    y_new = y_val_data_tensor[0:n,:].float().to(device)
-    print(len(y_new))
 
-    print('len validation',len(x_val))
+    # Generate first prediction
+    y_new = y_val_data_tensor[0:n,:]
+    y_new = y_new.to(device)
+    # print(len(y_new))
+
+    print('len validation (number of steps)',len(x_val))
 
     # Store generated predictions
     y_gen = list()
+
     # Store losses
     losses_list = list()
+
     # Loop over validation set
-    for n in range(1,len(x_val)):
+    for n in range(1,num_steps-1):
+
         # Predict next state using trained model
         y_next, losses = validation(model, x=x_new, y=y_new, criterion = loss_criterion)
         # print('y_next:', 1*(np.array(y_next)>0.5), np.sum(np.array(y_next)), len(y_next))
 
         # Update new input to be the prediction of the previous state
-        y_next = y_next.cpu()
-        x_new = torch.from_numpy(1*(np.array(y_next)>0.5)).float().to(device)
+        x_new_6507 = y_next[:, :chip_len].float().to(device)
+        x_new_6507 = x_new_6507.cpu()
+        x_new_6507 = torch.from_numpy(1*(np.array(x_new_6507)>0.5)).float()
+        x_new_6507 = x_new_6507.to(device)
+        x_new_emu = X_val_data_tensor[n:n+1, :emu_len].float().to(device)
+        # print('shapes of emu and 6507',x_new_emu.shape, x_new_6507.shape)
+        x_new = torch.cat((x_new_emu, x_new_6507), dim=1)
+        # print('shape of new input',x_new.shape)
+        x_new = x_new.to(device)
 
         # Update ground truth
-        y_new = y_val_data_tensor[n-1:n,input_dim:].float().to(device)
+        y_new = y_val_data_tensor[n+1,:].float().view(-1, len(y_val_data_tensor[n+1,:]))
+        y_new = y_new.to(device)
         # print('y_new:',np.sum(np.array(y_new)), len(y_new))
 
         losses_list.append(losses)
 
         # Store generated predictions
-        y_gen.append( (y_next>0.5).float().numpy() )
+        y_gen.append( (y_next>0.5).float().cpu().numpy() )
 
-    print('generate a new input to model based on iterative predictions')
-
-    # Convert predictions to binary
-    y_gen = y_gen.cpu()
-    gen_data = torch.from_numpy(1*(np.array(y_gen)>0.5)).float()
-    gen_data = gen_data.to(device)
-    #print(gen_data)
-    #print(np.sum(1*(np.array(y_gen)>0.5),0))
-
-    #print(gen_data.shape)
-    # Reshape [n x d]
-    gen_data = gen_data.view((len(y_gen),input_dim),-1)
-    print('reshaped:',gen_data.shape)
-
-    # Store losses
-    losses_new = list()
-    print('validate input made up of n successive states')
-    # Loop over number of successive steps
-    for n in range(1,len(x_val)-1):
-        x_new = gen_data[0:n].float().to(device)
-        y_new = y_val_data_tensor[0:n,input_dim:].float().to(device)
-        # Predict next state using trained model
-        print(x_new.size(), y_new.size())
-        y_next, losses = validation(model, x=x_new, y=y_new, criterion = loss_criterion)
-        # print('y_next:', 1*(np.array(y_next)>0.5), np.sum(np.array(y_next)), len(y_next))
-        losses_new.append(losses)
-
-    print(np.array(losses_new).shape)
-    fig = plt.figure(figsize=(7,7))
-    plt.plot(np.arange(0,n,n/len(losses_new)),losses_new)
-    plt.xlabel('n')
-    plt.ylabel('BCELoss')
-    plt.title('BCELoss predicting n successive steps')
-    #plt.close()
-    plt.savefig('figure2.png')
-    return None
+    return losses_list
 
 if __name__ == "__main__":
 
     import sys
     import numpy as np
+    import torch
+    import random
 
+    # Set parameters
     hidden_dim = sys.argv[1]
     bsize = sys.argv[2]
     ep = sys.argv[3]
@@ -304,8 +295,9 @@ if __name__ == "__main__":
     bsize = int(bsize)
     ep = int(ep)
     LR = float(LR)
-    print( 'hidden dim:', hidden_dim, 'batch size:', bsize, 'epoch:', ep, 'learning rate:', LR)
+    print( 'hidden dim:', hidden_dim, 'batch size:', bsize, 'epochs:', ep, 'learning rate:', LR)
 
+    # Load data
     X_tensor, y_tensor = load_data()
     X_train_data_tensor, y_train_data_tensor, X_val_data_tensor, y_val_data_tensor, X_test_data_tensor, y_test_data_tensor = train_val_test_split(X_tensor, y_tensor)
 
@@ -313,18 +305,18 @@ if __name__ == "__main__":
     x = X_train_data_tensor
     y_true = y_train_data_tensor
     print('number of changes in training set:',np.sum(np.array(y_true),axis=1))
+
     # Validation data
     x_val = X_val_data_tensor
     y_val_true = y_val_data_tensor
     print('number of changes in validation set:',np.sum(np.array(y_val_true),axis=1))
+
     # Test data
     x_test = X_test_data_tensor
     y_test_true = y_test_data_tensor
     print('number of changes in test set:',np.sum(np.array(y_test_true),axis=1))
 
     # Modeling
-    import torch
-    import random
     # Set up device
     cuda = torch.cuda.is_available()
     device = torch.device("cuda:0" if cuda else "cpu")
@@ -344,7 +336,21 @@ if __name__ == "__main__":
     params, optimizer, loss_criterion = set_params(model = model)
     y_pred, y_val_pred, train_losses, val_losses, best_model_path = train(model, batch_size=bsize, epochs=ep, x=x, y=y_true, x_val = x_val, y_val = y_val_true, optimizer=optimizer, criterion = loss_criterion)
     print('Best model path:', best_model_path)
-    torch.cuda.empty_cache()
+
+    # Plot training and validation losses
     plot_losses(train_losses, val_losses,'val')
-    tloss  = test(model_path=best_model_path, x_test = x_test, y_test = y_test_true, criterion = loss_criterion)
+
+    # Get test loss on best model
+    torch.cuda.empty_cache()
+    tloss  = test(model_path = best_model_path, x_test = x_test, y_test = y_test_true, criterion = loss_criterion)
     print('Test loss on best model:', tloss)
+
+    # Iterative predictions
+    iterative_losses_list = predict_multiple_steps(model_path = best_model_path, X_val_data_tensor = X_val_data_tensor, y_val_data_tensor = y_val_data_tensor, num_steps=2000)
+    # Plot losses from iterative loop
+    fig = plt.figure(figsize=(20,7))
+    plt.plot(iterative_losses_list)
+    plt.xlabel('n')
+    plt.ylabel('BCELoss')
+    plt.title('BCELoss predicting n successive steps')
+    plt.savefig('iterative_losses_hdim{}_bs{}_ep{}_lr{}.png'.format(hidden_dim, bsize, ep, LR))
