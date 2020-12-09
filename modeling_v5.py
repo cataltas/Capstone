@@ -188,8 +188,74 @@ def plot_losses(train_losses, val_losses):
     plt.title('Trainning and Validation Losses')
     plt.savefig('loss_hdim{}_bs{}_ep{}_lr{}.png'.format(hidden_dim,bsize,ep,LR))
     return None
+def predict_multiple_steps(X_val_data_tensor, y_val_data_tensor, num_steps, emu_len=113, chip_len=10):
 
-def predict_multiple_steps():
+    import torch
+    import numpy as np
+    # X and y shape: [9999, 1877] [9999, 4385]
+    # input: [152, 1725] EMU & 6507
+    # 1725 columns 6507 output, next 2660 are TIA. predicted output size [n,4385], 6507 chip output at t+1 concatenated with TIA chip output
+    # predicted output size [n,4385] -> keep only the 6507 chip output
+    # Use model to predict next state given previous state's prediction
+    n = 1
+    # Predict first state
+    #x_new_6507 = X_val_data_tensor[0:n,emu_len:emu_len+chip_len].float()
+    #x_new_emu = X_val_data_tensor[0:n,:emu_len].float()
+    #x_new = np.concatenate((x_new_emu, x_new_6507), axis=1)
+    x_new = X_val_data_tensor[0:n, :]
+    print('shape of new input',x_new.shape)
+    #x_new = torch.from_numpy(1*(np.array(x_new)>0.5)).float()
+    x_new = x_new.to(device)
+
+    # Generate first prediction
+    y_new = y_val_data_tensor[0:n,:]
+    y_new = y_new.to(device)
+    print(len(y_new))
+
+    print('len validation (number of steps)',len(x_val))
+
+    # Store generated predictions
+    y_gen = list()
+    # Store losses
+    losses_list = list()
+    # Loop over validation set
+    for n in range(1,num_steps-1):
+        # Predict next state using trained model
+        y_next, losses = validation(model, x=x_new, y=y_new, criterion = loss_criterion)
+        # print('y_next:', 1*(np.array(y_next)>0.5), np.sum(np.array(y_next)), len(y_next))
+
+        # Update new input to be the prediction of the previous state
+        x_new_6507 = y_next[:, :chip_len].float().to(device)
+        x_new_6507 = x_new_6507.cpu()
+        x_new_6507 = torch.from_numpy(1*(np.array(x_new_6507)>0.5)).float()
+        x_new_6507 = x_new_6507.to(device)
+        x_new_emu = X_val_data_tensor[n:n+1, :emu_len].float().to(device)
+        print('shapes of emu and 6507',x_new_emu.shape, x_new_6507.shape)
+        x_new = torch.cat((x_new_emu, x_new_6507), dim=1)
+        print('shape of new input',x_new.shape)
+        #x_new = x_new.cpu()
+        #x_new = torch.from_numpy(1*(np.array(x_new)>0.5)).float()
+        x_new = x_new.to(device)
+
+        # Update ground truth
+        y_new = y_val_data_tensor[n+1,:].float().view(-1, len(y_val_data_tensor[n+1,:]))
+        y_new = y_new.to(device)
+        # print('y_new:',np.sum(np.array(y_new)), len(y_new))
+
+        losses_list.append(losses)
+
+        # Store generated predictions
+        y_gen.append( (y_next>0.5).float().cpu().numpy() )
+
+    print(np.array(losses_list).shape)
+    fig = plt.figure(figsize=(20,7))
+    plt.plot(losses_list)
+    plt.xlabel('n')
+    plt.ylabel('BCELoss')
+    plt.title('BCELoss predicting next step using previous prediction as input')
+    #plt.close()
+    plt.savefig('figure2_loss_hdim{}_bs{}_ep{}_lr{}.png'.format(hidden_dim,bsize,ep,LR))
+def predict_multiple_steps_old():
     # Use model to predict next state given previous state's prediction
     n = 1
     # Predict first state
@@ -266,6 +332,7 @@ if __name__ == "__main__":
 
     import sys
     import numpy as np
+    #from modeling_v4 import predict_multiple_steps 
 
     hidden_dim = sys.argv[1]
     bsize = sys.argv[2]
@@ -313,3 +380,4 @@ if __name__ == "__main__":
     y_pred, y_val_pred, train_losses, val_losses = train(model, batch_size=bsize, epochs=ep, x=x, y=y_true, x_val = x_val, y_val = y_val_true, optimizer=optimizer, criterion = loss_criterion)
     torch.cuda.empty_cache()
     plot_losses(train_losses, val_losses)
+    predict_multiple_steps(X_val_data_tensor, y_val_data_tensor, 2000)
