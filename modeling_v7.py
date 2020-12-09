@@ -1,5 +1,5 @@
 #!/bin/bash
-# Usage: python -u modeling_v5.py hidden_dim bsize ep LR
+# Usage: python -u modeling_v7.py hidden_dim bsize ep LR
 
 # Import packages
 import matplotlib.pyplot as plt
@@ -159,6 +159,7 @@ def train(model, batch_size, epochs, x, y, x_val, y_val, optimizer, criterion):
                     best_loss = vloss.item()
                     best_model = model
                     filename = 'model_hdim{}_bs{}_ep{}_lr{}.pt'.format(hidden_dim, bsize, epoch+1, LR)
+                    torch.save(best_model.state_dict(), filename)
                     print('filename:',filename)
 
         vlosslists.append(torch.tensor(vlosses).mean())
@@ -170,7 +171,7 @@ def train(model, batch_size, epochs, x, y, x_val, y_val, optimizer, criterion):
             print('Epoch {} loss: {}, {}'.format(epoch+1, loss.item(), torch.tensor(losses).mean() ))
             break
 
-    torch.save(best_model.state_dict(), filename)
+    torch.save(model.state_dict(), 'model.pt')
     return y_pred.detach(), y_pred_val.detach(), losslists, vlosslists, filename
 
 def validation(model, x, y, criterion):
@@ -186,7 +187,7 @@ def validation(model, x, y, criterion):
     loss = criterion(y_pred, y)
 
     losses.append(loss.item())
-    print('Validation loss: {}, {}'.format(loss.item(), torch.tensor(losses).mean() ))
+    # print('Validation loss: {}, {}'.format(loss.item(), torch.tensor(losses).mean() ))
 
     return y_pred.detach(), losses
 
