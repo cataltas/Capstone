@@ -233,7 +233,7 @@ def predict_multiple_steps(model_path, X_val_data_tensor, y_val_data_tensor, num
     n = 1
     # Predict first state
     x_new = X_val_data_tensor[0:n, :]
-    print('shape of new input',x_new.shape)
+    # print('shape of new input',x_new.shape)
     x_new = x_new.to(device)
 
     # Generate first prediction
@@ -241,7 +241,7 @@ def predict_multiple_steps(model_path, X_val_data_tensor, y_val_data_tensor, num
     y_new = y_new.to(device)
     # print(len(y_new))
 
-    print('len validation (number of steps)',len(x_val))
+    # print('len validation (number of steps)',len(x_val))
 
     # Store generated predictions
     y_gen = list()
