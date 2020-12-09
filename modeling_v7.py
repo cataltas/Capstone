@@ -6,14 +6,14 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 def load_data():
-    import numpy as np
-    import torch
+    # import numpy as np
+    # import torch
 
     print('loading data')
-    # X = pd.read_csv('X.csv')
-    # y = pd.read_csv('y.csv')
-    X = pd.read_csv('X_downsampled.csv')
-    y = pd.read_csv('y_downsampled.csv')
+    X = pd.read_csv('X.csv')
+    y = pd.read_csv('y.csv')
+    # X = pd.read_csv('X_downsampled.csv')
+    # y = pd.read_csv('y_downsampled.csv')
     X = X.sort_values(by  = 'time')
     y = y.sort_values(by = 'time')
     assert np.max(X['time']) == np.max(y['time'])
@@ -34,7 +34,8 @@ def load_data():
 
 # Train, val, test
 def train_val_test_split(X_tensor, y_tensor):
-    import torch
+    # import torch
+
     train_ratio = 0.6
     validation_ratio = 0.2
     test_ratio = 0.2
@@ -60,9 +61,9 @@ def train_val_test_split(X_tensor, y_tensor):
     return X_train_data_tensor, y_train_data_tensor, X_val_data_tensor, y_val_data_tensor, X_test_data_tensor, y_test_data_tensor
 
 def set_params(model):
-    import torch
-    from torch import nn
-    from torch import optim
+    # import torch
+    # from torch import nn
+    # from torch import optim
 
     params = list(model.parameters())
 
@@ -75,8 +76,9 @@ def set_params(model):
     return params, optimizer, loss_criterion
 
 def define_model(input_dim, output_dim, hidden_dim):
-    import torch
-    from torch import nn
+    # import torch
+    # from torch import nn
+
     print('input, output, hidden dim:',input_dim, output_dim, hidden_dim)
 
     model = nn.Sequential(
@@ -91,9 +93,9 @@ def define_model(input_dim, output_dim, hidden_dim):
 
 # Training loop
 def train(model, batch_size, epochs, x, y, x_val, y_val, optimizer, criterion):
-    import torch
-    from torch import nn
-    from torch import optim
+    # import torch
+    # from torch import nn
+    # from torch import optim
 
     print('inside train loop sizes:', x.size(), y.size(), x_val.size(), y_val.size())
     x, y = x.to(device), y.to(device)
@@ -107,6 +109,7 @@ def train(model, batch_size, epochs, x, y, x_val, y_val, optimizer, criterion):
     losslists = []
     vlosslists = []
     filename = ''
+    best_model = None
 
     for epoch in range(epochs):
 
@@ -152,26 +155,30 @@ def train(model, batch_size, epochs, x, y, x_val, y_val, optimizer, criterion):
 
             # Save the best model
             if epoch == 0:
+                print('first epoch loss: {}'.format(vloss.item()))
                 best_loss = vloss.item()
             else:
                 if vloss.item() < best_loss:
-                    # print('Best loss: {}, Current loss: {}'.format(best_loss, vloss.item()))
+                    print('Best loss: {}, Current loss: {}'.format(best_loss, vloss.item()))
                     best_loss = vloss.item()
                     best_model = model
                     filename = 'model_hdim{}_bs{}_ep{}_lr{}.pt'.format(hidden_dim, bsize, epoch+1, LR)
                     torch.save(best_model.state_dict(), filename)
-                    print('filename:',filename)
+
+            if (epoch == epochs and best_model == None):
+                print('last epoch loss: {}'.format(vloss.item()))
+                best_model = model
+                filename = 'model_hdim{}_bs{}_ep{}_lr{}.pt'.format(hidden_dim, bsize, epoch+1, LR)
+                torch.save(best_model.state_dict(), filename)
 
         vlosslists.append(torch.tensor(vlosses).mean())
 
         print('Validation loss: {}, {}'.format(vloss.item(), torch.tensor(vlosses).mean() ))
-        # print('best model path:', filename)
 
         if torch.tensor(losses).mean() < 1e-2:
             print('Epoch {} loss: {}, {}'.format(epoch+1, loss.item(), torch.tensor(losses).mean() ))
             break
 
-    torch.save(model.state_dict(), 'model.pt')
     return y_pred.detach(), y_pred_val.detach(), losslists, vlosslists, filename
 
 def validation(model, x, y, criterion):
@@ -225,6 +232,8 @@ def predict_multiple_steps(model_path, X_val_data_tensor, y_val_data_tensor, num
     '''
     Use model to predict next state given previous state's prediction
     '''
+    # import numpy as np
+    # import torch
 
     # Load the best model
     model.load_state_dict(torch.load(model_path))
@@ -285,6 +294,8 @@ if __name__ == "__main__":
     import numpy as np
     import torch
     import random
+    from torch import nn
+    from torch import optim
 
     # Set parameters
     hidden_dim = sys.argv[1]
