@@ -12,4 +12,4 @@ Take aways: These plots are hard to interpret due to the fact that we have a dis
 
 Modeling script usage:
   
-  ```python -u modeling_v4.py hidden_dim bsize ep LR```
+  ```python -u modeling_new.py hidden_dim bsize ep LR```
