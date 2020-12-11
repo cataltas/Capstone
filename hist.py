@@ -21,7 +21,7 @@ for i in range(y_next_sim6507.shape[0]):
 
 fig, axs = plt.subplots(2,1,figsize=(15,15))
 fig.suptitle('Frequency of the Total Number of Wires which Changed States after One Step')
-axs[0].hist(label_6507,bins=10)
+axs[0].hist(label_6507)
 axs[0].set_ylabel("Number of Occurences")
 axs[0].set_xlabel("Number of Wires which Changed States")
 axs[0].set_title("Sim6507")
@@ -30,7 +30,7 @@ label_tia = []
 for i in range(y_next_simTIA.shape[0]):
   label_tia.append(sum(y_next_simTIA.iloc[i]!=y_simTIA.iloc[i]))
   
-axs[1].hist(label_tia,bins=10)
+axs[1].hist(label_tia)
 axs[1].set_ylabel("Number of Occurences")
 axs[1].set_xlabel("Number of Wires which Changed States")
 axs[1].set_title("SimTIA")
