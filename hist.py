@@ -12,13 +12,15 @@ print(y.columns)
 
 if "CLK0_y" in y.columns:
     print("yes cl")
-if "VSYNC_y" in y.columns:
+if "VSYNC" in y.columns:
     print("yes vs")  
 
-# y_sim6507=y.iloc[:,0:1725]
-# y_next_sim6507 = y_next.iloc[:,1:1726]
-# y_simTIA=y.iloc[:,1726:y.shape[1]]
-# y_next_simTIA = y_next.iloc[:,1726:y.shape[1]]
+y_sim6507=y.iloc[:,0:1725]
+y_next_sim6507 = y_next.iloc[:,0:1725]
+y_simTIA=y.iloc[:,1726:y.shape[1]]
+y_next_simTIA = y_next.iloc[:,1726:y.shape[1]]
+
+print(y_sim6507.shape)
 
 
 # label_6507 = []
