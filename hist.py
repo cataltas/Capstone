@@ -36,41 +36,41 @@ y_next_simTIA = y_next.iloc[:,1725:y.shape[1]]
 # axs[1].set_title("SimTIA")
 # fig.savefig("hist1.png")
 
-label_2_6507= []
-for i in range(y_next_sim6507.shape[0]):
-    label_2_6507.append(np.where(y_next_sim6507.iloc[i]!=y_sim6507.iloc[i])[0])
-label_2_6507= np.concatenate(label_2_6507,axis=0)
+# label_2_6507= []
+# for i in range(y_next_sim6507.shape[0]):
+#     label_2_6507.append(np.where(y_next_sim6507.iloc[i]!=y_sim6507.iloc[i])[0])
+# label_2_6507= np.concatenate(label_2_6507,axis=0)
 
-fig2, axs2 = plt.subplots(2,1,figsize=(15,15))
-fig2.suptitle('Number of Times Each Wire Changed State')
-axs2[0].hist(label_2_6507,bins=100)
-axs2[0].set_ylabel("Number of Times Changed")
-axs2[0].set_xlabel("Wires")
-axs2[0].set_title("Sim6507")
+# fig2, axs2 = plt.subplots(2,1,figsize=(15,15))
+# fig2.suptitle('Number of Times Each Wire Changed State')
+# axs2[0].hist(label_2_6507,bins=100)
+# axs2[0].set_ylabel("Number of Times Changed")
+# axs2[0].set_xlabel("Wires")
+# axs2[0].set_title("Sim6507")
 
-label_2_tia= []
-for i in range(y_next_simTIA.shape[0]):
-    label_2_tia.append(np.where(y_next_simTIA.iloc[i]!=y_simTIA.iloc[i])[0])
-label_2_tia= np.concatenate(label_2_tia,axis=0)
+# label_2_tia= []
+# for i in range(y_next_simTIA.shape[0]):
+#     label_2_tia.append(np.where(y_next_simTIA.iloc[i]!=y_simTIA.iloc[i])[0])
+# label_2_tia= np.concatenate(label_2_tia,axis=0)
 
-axs2[1].hist(label_2_tia,bins =100)
-axs2[1].set_ylabel("Number of Times Changed")
-axs2[1].set_xlabel("Wires")
-axs2[1].set_title("SimTIA")
-fig2.savefig("hist2.png")
+# axs2[1].hist(label_2_tia,bins =100)
+# axs2[1].set_ylabel("Number of Times Changed")
+# axs2[1].set_xlabel("Wires")
+# axs2[1].set_title("SimTIA")
+# fig2.savefig("hist2.png")
 
-# columns = ['COLCNT_T0', 'COLCNT_T1', 'COLCNT_T2', 'COLCNT_T3','L0_lowCtrl', 'L1_lowCtrl', 'L2_lowCtrl']
-# y_next_simTIA_render = y_next_simTIA[columns]
-# print(y_next_simTIA_render.shape)
-# print(np.unique(y_next_simTIA['CLK0_y'],return_counts=True))
-# print(np.unique(y_next_simTIA['VSYNC'],return_counts=True))
+columns = ['COLCNT_T0', 'COLCNT_T1', 'COLCNT_T2', 'COLCNT_T3','L0_lowCtrl', 'L1_lowCtrl', 'L2_lowCtrl']
+y_next_simTIA_render = y_next_simTIA[columns]
+print(y_next_simTIA_render.shape)
+print(np.unique(y_next_simTIA['CLK0_y'],return_counts=True))
+print(np.unique(y_next_simTIA['VSYNC'],return_counts=True))
 
-# label_3_TIA= np.concatenate(y_next_simTIA_render,axis=0)
+label_3_TIA= np.concatenate(y_next_simTIA_render,axis=0)
 
-# fig3 = plt.figure(figsize=(15,15))
-# plt.hist(label_3_TIA,bins=7)
-# plt.title('Frequency of the Values of the Wires Used for Image Rendering')
-# plt.ylabel("Frequency")
-# plt.xlabel("Wire Value")
-# fig3.savefig("hist3.png")
+fig3 = plt.figure(figsize=(15,15))
+plt.hist(label_3_TIA,bins=7)
+plt.title('Frequency of the Values of the Wires Used for Image Rendering')
+plt.ylabel("Frequency")
+plt.xlabel("Wire Value")
+fig3.savefig("hist3.png")
 
