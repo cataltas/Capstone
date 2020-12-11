@@ -4,6 +4,7 @@ import numpy as np
 
 y = pd.read_csv("y.csv",index_col=False)
 y_next = y.iloc[1:y.shape[0]]
+print(y.head)
 
 y_sim6507=y.iloc[:,1:1726]
 y_next_sim6507 = y_next.iloc[:,1:1726]
