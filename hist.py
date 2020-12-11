@@ -7,42 +7,34 @@ y= y.drop("time",axis=1)
 
 y_next = y.iloc[1:y.shape[0]]
 
-print(y.head)
-print(y.columns)
-
-if "CLK0_y" in y.columns:
-    print("yes cl")
-if "VSYNC" in y.columns:
-    print("yes vs")  
 
 y_sim6507=y.iloc[:,0:1725]
 y_next_sim6507 = y_next.iloc[:,0:1725]
-y_simTIA=y.iloc[:,1726:y.shape[1]]
-y_next_simTIA = y_next.iloc[:,1726:y.shape[1]]
-
-print(y_sim6507.shape)
+y_simTIA=y.iloc[:,1725:y.shape[1]]
+y_next_simTIA = y_next.iloc[:,1725:y.shape[1]]
 
 
-# label_6507 = []
-# for i in range(y_next_sim6507.shape[0]):
-#   label_6507.append(sum(y_next_sim6507.iloc[i]!=y_sim6507.iloc[i]))
 
-# fig, axs = plt.subplots(2,1,figsize=(15,15))
-# fig.suptitle('Frequency of the Total Number of Wires which Changed States after One Step')
-# axs[0].hist(label_6507,bins=10)
-# axs[0].set_ylabel("Number of Occurences")
-# axs[0].set_xlabel("Number of Wires which Changed States")
-# axs[0].set_title("Sim6507")
+label_6507 = []
+for i in range(y_next_sim6507.shape[0]):
+  label_6507.append(sum(y_next_sim6507.iloc[i]!=y_sim6507.iloc[i]))
 
-# label_tia = []
-# for i in range(y_next_simTIA.shape[0]):
-#   label_tia.append(sum(y_next_simTIA.iloc[i]!=y_simTIA.iloc[i]))
+fig, axs = plt.subplots(2,1,figsize=(15,15))
+fig.suptitle('Frequency of the Total Number of Wires which Changed States after One Step')
+axs[0].hist(label_6507,bins=10)
+axs[0].set_ylabel("Number of Occurences")
+axs[0].set_xlabel("Number of Wires which Changed States")
+axs[0].set_title("Sim6507")
+
+label_tia = []
+for i in range(y_next_simTIA.shape[0]):
+  label_tia.append(sum(y_next_simTIA.iloc[i]!=y_simTIA.iloc[i]))
   
-# axs[1].hist(label_tia,bins=10)
-# axs[1].set_ylabel("Number of Occurences")
-# axs[1].set_xlabel("Number of Wires which Changed States")
-# axs[1].set_title("SimTIA")
-# fig.savefig("hist1.png")
+axs[1].hist(label_tia,bins=10)
+axs[1].set_ylabel("Number of Occurences")
+axs[1].set_xlabel("Number of Wires which Changed States")
+axs[1].set_title("SimTIA")
+fig.savefig("hist1.png")
 
 # label_2_6507= []
 # for i in range(y_next_sim6507.shape[0]):
@@ -70,7 +62,7 @@ print(y_sim6507.shape)
 # columns = ['COLCNT_T0', 'COLCNT_T1', 'COLCNT_T2', 'COLCNT_T3','L0_lowCtrl', 'L1_lowCtrl', 'L2_lowCtrl']
 # y_next_simTIA_render = y_next_simTIA[columns]
 # print(y_next_simTIA_render.shape)
-# print(np.unique(y_next_simTIA['CLK0'],return_counts=True))
+# print(np.unique(y_next_simTIA['CLK0_y'],return_counts=True))
 # print(np.unique(y_next_simTIA['VSYNC'],return_counts=True))
 
 # label_3_TIA= np.concatenate(y_next_simTIA_render,axis=0)
