@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt 
 import numpy as np
 
-y = pd.read_csv("y.csv",index_col=False)
+y = pd.read_csv("y.csv")
 y= y.drop("time",axis=1)
 
 y_next = y.iloc[1:y.shape[0]]
@@ -13,7 +13,7 @@ if "CLK0" in y.columns:
 if "VSYNV" in y.columns:
     print("yes vs")  
 
-y_sim6507=y.iloc[:,1:1726]
+y_sim6507=y.iloc[:,0:1725]
 y_next_sim6507 = y_next.iloc[:,1:1726]
 y_simTIA=y.iloc[:,1726:y.shape[1]]
 y_next_simTIA = y_next.iloc[:,1726:y.shape[1]]
