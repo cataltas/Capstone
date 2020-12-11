@@ -8,15 +8,16 @@ y= y.drop("time",axis=1)
 y_next = y.iloc[1:y.shape[0]]
 
 print(y.head)
+print(y.columns)
 if "CLK0" in y.columns:
     print("yes cl")
-if "VSYNV" in y.columns:
+if "VSYNC" in y.columns:
     print("yes vs")  
 
-y_sim6507=y.iloc[:,0:1725]
-y_next_sim6507 = y_next.iloc[:,1:1726]
-y_simTIA=y.iloc[:,1726:y.shape[1]]
-y_next_simTIA = y_next.iloc[:,1726:y.shape[1]]
+# y_sim6507=y.iloc[:,0:1725]
+# y_next_sim6507 = y_next.iloc[:,1:1726]
+# y_simTIA=y.iloc[:,1726:y.shape[1]]
+# y_next_simTIA = y_next.iloc[:,1726:y.shape[1]]
 
 
 # label_6507 = []
