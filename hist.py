@@ -9,9 +9,9 @@ y_next = y.iloc[1:y.shape[0]]
 
 print(y.head)
 print(y.columns)
-if "CLK0" in y.columns:
+if "CLK0_y" in y.columns:
     print("yes cl")
-if "VSYNC" in y.columns:
+if "VSYNC_y" in y.columns:
     print("yes vs")  
 
 # y_sim6507=y.iloc[:,0:1725]
