@@ -61,15 +61,13 @@ y_next_simTIA = y_next.iloc[:,1725:y.shape[1]]
 
 columns = ['COLCNT_T0', 'COLCNT_T1', 'COLCNT_T2', 'COLCNT_T3','L0_lowCtrl', 'L1_lowCtrl', 'L2_lowCtrl']
 y_next_simTIA_render = y_next_simTIA[columns]
-
 label_3_TIA= y_next_simTIA_render.values.tolist()
-
-print(y_next_simTIA_render.head)
-print(label_3_TIA)
-# fig3 = plt.figure(figsize=(15,15))
-# plt.hist(label_3_TIA,bins=7)
-# plt.title('Frequency of the Values of the Wires Used for Image Rendering')
-# plt.ylabel("Frequency")
-# plt.xlabel("Wire Value")
-# fig3.savefig("hist3.png")
+(values,counts)=np.unique(label_3_TIA,return_counts=True)
+fig3 = plt.figure(figsize=(15,15))
+plt.plot(values,counts)
+plt.xticks(values,[0,1,2,4,8,16,32])
+plt.title('Frequency of the Values of the Wires Used for Image Rendering')
+plt.ylabel("Frequency")
+plt.xlabel("Wire Value")
+fig3.savefig("hist3.png")
 
