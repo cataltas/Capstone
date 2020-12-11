@@ -64,7 +64,7 @@ y_next_simTIA_render = y_next_simTIA[columns]
 
 label_3_TIA= y_next_simTIA_render.values.tolist()
 
-print(np.unique(label_3_TIA,return_count=True))
+print(np.unique(label_3_TIA,return_counts=True))
 # fig3 = plt.figure(figsize=(15,15))
 # plt.hist(label_3_TIA,bins=7)
 # plt.title('Frequency of the Values of the Wires Used for Image Rendering')
