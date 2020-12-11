@@ -2,10 +2,15 @@ import pandas as pd
 import matplotlib.pyplot as plt 
 import numpy as np
 
+y= y.drop("time",axis=1)
 y = pd.read_csv("y.csv",index_col=False)
 y_next = y.iloc[1:y.shape[0]]
+
 print(y.head)
-print(y.columns)
+if "CLK0" in y.columns:
+    print("yes cl")
+if "VSYNV" in y.columns:
+    print("yes vs")  
 
 y_sim6507=y.iloc[:,1:1726]
 y_next_sim6507 = y_next.iloc[:,1:1726]
@@ -57,18 +62,18 @@ y_next_simTIA = y_next.iloc[:,1726:y.shape[1]]
 # axs2[1].set_title("SimTIA")
 # fig2.savefig("hist2.png")
 
-columns = ['COLCNT_T0', 'COLCNT_T1', 'COLCNT_T2', 'COLCNT_T3','L0_lowCtrl', 'L1_lowCtrl', 'L2_lowCtrl']
-y_next_simTIA_render = y_next_simTIA[columns]
-print(y_next_simTIA_render.shape)
-print(np.unique(y_next_simTIA['CLK0'],return_counts=True))
-print(np.unique(y_next_simTIA['VSYNC'],return_counts=True))
+# columns = ['COLCNT_T0', 'COLCNT_T1', 'COLCNT_T2', 'COLCNT_T3','L0_lowCtrl', 'L1_lowCtrl', 'L2_lowCtrl']
+# y_next_simTIA_render = y_next_simTIA[columns]
+# print(y_next_simTIA_render.shape)
+# print(np.unique(y_next_simTIA['CLK0'],return_counts=True))
+# print(np.unique(y_next_simTIA['VSYNC'],return_counts=True))
 
-label_3_TIA= np.concatenate(y_next_simTIA_render,axis=0)
+# label_3_TIA= np.concatenate(y_next_simTIA_render,axis=0)
 
-fig3 = plt.figure(figsize=(15,15))
-plt.hist(label_3_TIA,bins=7)
-plt.title('Frequency of the Values of the Wires Used for Image Rendering')
-plt.ylabel("Frequency")
-plt.xlabel("Wire Value")
-fig3.savefig("hist3.png")
+# fig3 = plt.figure(figsize=(15,15))
+# plt.hist(label_3_TIA,bins=7)
+# plt.title('Frequency of the Values of the Wires Used for Image Rendering')
+# plt.ylabel("Frequency")
+# plt.xlabel("Wire Value")
+# fig3.savefig("hist3.png")
 
