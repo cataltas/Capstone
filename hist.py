@@ -61,9 +61,6 @@ y_next_simTIA = y_next.iloc[:,1725:y.shape[1]]
 
 columns = ['COLCNT_T0', 'COLCNT_T1', 'COLCNT_T2', 'COLCNT_T3','L0_lowCtrl', 'L1_lowCtrl', 'L2_lowCtrl']
 y_next_simTIA_render = y_next_simTIA[columns]
-print(y_next_simTIA_render.shape)
-print(np.unique(y_next_simTIA['CLK0_y'],return_counts=True))
-print(np.unique(y_next_simTIA['VSYNC'],return_counts=True))
 
 label_3_TIA= np.concatenate(y_next_simTIA_render,axis=0)
 
