@@ -167,6 +167,7 @@ def train(model, batch_size, epochs, x, y, x_val, y_val, optimizer, criterion):
 
         print('Validation loss: {}, {}'.format(vloss.item(), torch.tensor(vlosses).mean() ))
 
+        # TODO: adjust early stopping
         if torch.tensor(losses).mean() < 1e-2:
             print('Epoch {} loss: {}, {}'.format(epoch+1, loss.item(), torch.tensor(losses).mean() ))
             break
@@ -246,6 +247,8 @@ def predict_multiple_steps(model_path, X_val_data_tensor, y_val_data_tensor, num
 
         # Update new input to be the prediction of the previous state
         x_new_6507 = y_next[:, :chip_len].float().to(device)
+        if n % 100 == 0:
+            print('Step {}: x_new_6507: {}'.format(n, x_new_6507))
 
         x_new_emu = X_val_data_tensor[n:n+1, :emu_len].float().to(device)
         # print('shapes of emu and 6507',x_new_emu.shape, x_new_6507.shape)
@@ -262,6 +265,8 @@ def predict_multiple_steps(model_path, X_val_data_tensor, y_val_data_tensor, num
 
         # Store generated predictions
         y_next = y_next.cpu()
+        if n % 100 == 0:
+            print('Step {}: y_next: {}, {}'.format(n, y_next, np.sum(np.array(y_next))))
 
         y_gen.append( (y_next).numpy() )
 
