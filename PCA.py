@@ -44,7 +44,7 @@ print(c)
 def TSNE_(data,labels):
     N = 10000
     rndperm = np.random.permutation(data.shape[0])
-    data_subset = data[rndperm[:N],:].copy()
+    data_subset = data.iloc[rndperm[:N],:].copy()
     labels_subset = [labels[i] for i in rndperm[:N]] 
     time_start = time.time()
     tsne = TSNE(n_components=2, verbose=1, perplexity=40, n_iter=300)
