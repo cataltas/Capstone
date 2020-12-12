@@ -14,4 +14,5 @@ cd /scratch/tn709/capstone/Capstone
 source setup.sh
 export MPLBACKEND="pdf"
 #conda activate cap_env
-python -u modeling_v4.py 5000 100 100 0.001
+python -u mod_disc.py 5000 64 30 0.001
+python -u mod_disc.py 5000 64 30 0.001 'full'
