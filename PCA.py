@@ -26,7 +26,7 @@ for i,label in labels.iterrows():
         labels_dict[label]=c
         encoded_labels.append(c)
 print(c)
-test = labels.drop_duplicates()
+print(labels.drop_duplicates().shape)
 
 
 # def PCA_(data,labels,c):
