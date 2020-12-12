@@ -26,6 +26,7 @@ for i,label in labels.iterrows():
         labels_dict[label]=c
         encoded_labels.append(c)
 print(c)
+test = labels.drop_duplicates()
 
 
 # def PCA_(data,labels,c):
@@ -42,7 +43,7 @@ print(c)
 #     print('Explained variation per principal component: {}'.format(pca.explained_variance_ratio_))
 
 def TSNE_(data,labels):
-    N = 10000
+    N = 100000
     rndperm = np.random.permutation(data.shape[0])
     data_subset = data.iloc[rndperm[:N],:].copy()
     labels_subset = [labels[i] for i in rndperm[:N]] 
@@ -55,7 +56,7 @@ def TSNE_(data,labels):
     x=tsne_results[:,0], y=tsne_results[:,1],
     hue=labels_subset,
     palette=sns.color_palette("hls", len(np.unique(labels_subset))),
-    legend="full",
+    legend="auto",
     alpha=0.3
     )
     plt.savefig("TSNE.png")
