@@ -14,11 +14,10 @@ x = pd.read_csv("X.csv")
 labels = pd.read_csv("y.csv")
 x= x.drop("time",axis=1)
 labels=labels.drop("time",axis=1)
-print(labels.shape)
 labels_dict = {}
 encoded_labels=[]
 c=0
-for i,label in enumerate(labels):
+for i,label in labels.iterrows():
     label = str(label)
     if label in labels_dict.keys():
         encoded_labels.append(labels_dict[label])
@@ -26,7 +25,6 @@ for i,label in enumerate(labels):
         c=c+1
         labels_dict[label]=c
         encoded_labels.append(c)
-
 print(len(encoded_labels))
 
 
