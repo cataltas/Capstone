@@ -1,7 +1,7 @@
 #!/bin/bash
 
-##SBATCH --gres=gpu:1
-#SBATCH --cpus-per-task=1
+#SBATCH --gres=gpu:1
+#SBATCH --partition=v100_sxm2_4
 #SBATCH --nodes=1
 #SBATCH --job-name=modeling
 #SBATCH --mem=100GB
@@ -15,4 +15,4 @@ source setup.sh
 export MPLBACKEND="pdf"
 #conda activate cap_env
 python -u mod_disc.py 5000 64 30 0.001 'small'
-#python -u mod_disc.py 5000 64 30 0.001 'full'
+python -u mod_disc.py 5000 64 30 0.001 'full'

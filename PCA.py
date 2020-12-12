@@ -10,13 +10,14 @@ import seaborn as sns
 import time
 
 
-ts_spikes = np.load("donkeykong.5000.ts.spikes.npy", mmap_mode='r')
-labels = ts_spikes[1:len(ts_spikes),:]
-labels=np.vstack([labels, ts_spikes[len(ts_spikes)-1,:]])
+x = pd.read_csv("X.csv")
+labels = pd.read_csv("y.csv")
+x= x.drop("time",axis=1)
+labels=labels.drop("time",axis=1)
 labels_dict = {}
 encoded_labels=[]
 c=0
-for i,label in enumerate(labels):
+for i,label in labels.iterrows():
     label = str(label)
     if label in labels_dict.keys():
         encoded_labels.append(labels_dict[label])
@@ -24,42 +25,44 @@ for i,label in enumerate(labels):
         c=c+1
         labels_dict[label]=c
         encoded_labels.append(c)
+print(c)
+print(labels.drop_duplicates().shape)
 
 
-def PCA_(data,labels):
+def PCA_(data,labels,c):
     pca = PCA(n_components=2)
     X_reduced = pca.fit_transform(data)
     plt.figure(figsize=(16,10))
     sns.scatterplot(
     x=X_reduced[:,0], y=X_reduced[:,1],
     hue=labels,
-    palette=sns.color_palette("hls", 8),
-    legend="full",
+    palette=sns.color_palette("hls", c),
+    legend="auto",
     alpha=0.3)
-    plt.savefig("PCA_labels_2d.png")
+    plt.savefig("PCA_labels_2d_2.png")
     print('Explained variation per principal component: {}'.format(pca.explained_variance_ratio_))
 
-def TSNE_(data,labels):
-    N = 10000
-    rndperm = np.random.permutation(data.shape[0])
-    data_subset = data[rndperm[:N],:].copy()
-    labels_subset = [labels[i] for i in rndperm[:N]] 
-    time_start = time.time()
-    tsne = TSNE(n_components=2, verbose=1, perplexity=40, n_iter=300)
-    tsne_results = tsne.fit_transform(data_subset)
-    print('t-SNE done! Time elapsed: {} seconds'.format(time.time()-time_start))
-    plt.figure(figsize=(16,10))
-    sns.scatterplot(
-    x=tsne_results[:,0], y=tsne_results[:,1],
-    hue=labels_subset,
-    palette=sns.color_palette("hls", len(np.unique(labels_subset))),
-    legend="full",
-    alpha=0.3
-    )
-    plt.savefig("TSNE.png")
+# def TSNE_(data,labels):
+#     N = 100000
+#     rndperm = np.random.permutation(data.shape[0])
+#     data_subset = data.iloc[rndperm[:N],:].copy()
+#     labels_subset = [labels[i] for i in rndperm[:N]] 
+#     time_start = time.time()
+#     tsne = TSNE(n_components=2, verbose=1, perplexity=40, n_iter=300)
+#     tsne_results = tsne.fit_transform(data_subset)
+#     print('t-SNE done! Time elapsed: {} seconds'.format(time.time()-time_start))
+#     plt.figure(figsize=(16,10))
+#     sns.scatterplot(
+#     x=tsne_results[:,0], y=tsne_results[:,1],
+#     hue=labels_subset,
+#     palette=sns.color_palette("hls", len(np.unique(labels_subset))),
+#     legend="auto",
+#     alpha=0.3
+#     )
+#     plt.savefig("TSNE.png")
 
 def main():
-    PCA_(ts_spikes,encoded_labels)
-    TSNE_(ts_spikes,encoded_labels)
+    PCA_(x,encoded_labels,c)
+    # TSNE_(x,encoded_labels)
 if __name__ == "__main__":
     main()
