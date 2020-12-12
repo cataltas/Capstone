@@ -10,9 +10,10 @@ import seaborn as sns
 import time
 
 
-ts_spikes = np.load("donkeykong.5000.ts.spikes.npy", mmap_mode='r')
-labels = ts_spikes[1:len(ts_spikes),:]
-labels=np.vstack([labels, ts_spikes[len(ts_spikes)-1,:]])
+x = pd.read_csv("X.csv")
+labels = pd.read_csv("y.csv")
+x= x.drop("time",axis=1)
+labels=y.drop("time",axis=1)
 labels_dict = {}
 encoded_labels=[]
 c=0
@@ -24,6 +25,8 @@ for i,label in enumerate(labels):
         c=c+1
         labels_dict[label]=c
         encoded_labels.append(c)
+
+print(len(encoded_labels),c)
 
 
 def PCA_(data,labels):
