@@ -25,21 +25,21 @@ for i,label in labels.iterrows():
         c=c+1
         labels_dict[label]=c
         encoded_labels.append(c)
-print(len(encoded_labels))
+print(c)
 
 
-# def PCA_(data,labels):
-#     pca = PCA(n_components=2)
-#     X_reduced = pca.fit_transform(data)
-#     plt.figure(figsize=(16,10))
-#     sns.scatterplot(
-#     x=X_reduced[:,0], y=X_reduced[:,1],
-#     hue=labels,
-#     palette=sns.color_palette("hls", 8),
-#     legend="full",
-#     alpha=0.3)
-#     plt.savefig("PCA_labels_2d.png")
-#     print('Explained variation per principal component: {}'.format(pca.explained_variance_ratio_))
+def PCA_(data,labels,c):
+    pca = PCA(n_components=2)
+    X_reduced = pca.fit_transform(data)
+    plt.figure(figsize=(16,10))
+    sns.scatterplot(
+    x=X_reduced[:,0], y=X_reduced[:,1],
+    hue=labels,
+    palette=sns.color_palette("hls", c),
+    legend="full",
+    alpha=0.3)
+    plt.savefig("PCA_labels_2d.png")
+    print('Explained variation per principal component: {}'.format(pca.explained_variance_ratio_))
 
 # def TSNE_(data,labels):
 #     N = 10000
@@ -60,8 +60,8 @@ print(len(encoded_labels))
 #     )
 #     plt.savefig("TSNE.png")
 
-# def main():
-#     PCA_(ts_spikes,encoded_labels)
-#     TSNE_(ts_spikes,encoded_labels)
-# if __name__ == "__main__":
-#     main()
+def main():
+    PCA_(x,encoded_labels,c)
+    # TSNE_(ts_spikes,encoded_labels)
+if __name__ == "__main__":
+    main()
