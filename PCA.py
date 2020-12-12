@@ -62,7 +62,7 @@ def TSNE_(data,labels):
     plt.savefig("TSNE.png")
 
 def main():
-    # PCA_(x,encoded_labels,c)
-    TSNE_(x,encoded_labels)
+    PCA_(x,encoded_labels)
+    # TSNE_(x,encoded_labels)
 if __name__ == "__main__":
     main()
