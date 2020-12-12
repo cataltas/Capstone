@@ -14,5 +14,5 @@ cd /scratch/tn709/capstone/Capstone
 source setup.sh
 export MPLBACKEND="pdf"
 #conda activate cap_env
-#python -u mod_nodisc.py 5000 64 30 0.001 'small'
-python -u mod_nodisc.py 5000 64 30 0.001 'full'
+python -u mod_nodisc.py 5000 64 30 0.001 'small'
+#python -u mod_nodisc.py 5000 64 30 0.001 'full'
