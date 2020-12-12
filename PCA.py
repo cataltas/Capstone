@@ -14,6 +14,7 @@ x = pd.read_csv("X.csv")
 labels = pd.read_csv("y.csv")
 x= x.drop("time",axis=1)
 labels=labels.drop("time",axis=1)
+print(labels.shape)
 labels_dict = {}
 encoded_labels=[]
 c=0
@@ -26,7 +27,7 @@ for i,label in enumerate(labels):
         labels_dict[label]=c
         encoded_labels.append(c)
 
-print(len(encoded_labels),c)
+print(len(encoded_labels))
 
 
 # def PCA_(data,labels):
