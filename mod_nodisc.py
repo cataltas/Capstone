@@ -11,6 +11,8 @@ def load_data(X_file, y_file):
     assert np.max(X['time']) == np.max(y['time'])
     X[X.columns[153:]] = X[X.columns[153:]]-1
     y = y-1
+    # print(X.columns)
+    # print(y.columns)
     X = X.drop(['time'], axis = 1)
     y = y.drop(['time'], axis = 1)
     # Drop columns with no changes
@@ -172,14 +174,12 @@ def train(model, batch_size, epochs, x, y, x_val, y_val, optimizer, criterion):
     print('Val losses:', vlosslists)
     return y_pred.detach(), y_pred_val.detach(), losslists, vlosslists, filename
 
-def validation(model_path, x, y, criterion):
-    # Load the best model
-    model.load_state_dict(torch.load(model_path))
+def validation(model, x, y, criterion):
     model.eval()
 
     with torch.no_grad():
         y_pred = model(x)
-        print(y_pred)
+        # print(y_pred)
 
     loss = criterion(y_pred, y)
 
