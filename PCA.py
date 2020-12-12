@@ -37,7 +37,7 @@ def PCA_(data,labels):
     sns.scatterplot(
     x=X_reduced[:,0], y=X_reduced[:,1],
     hue=labels_subset,
-    palette=sns.color_palette("hls", len(np.unique(labels_subset)))),
+    palette=sns.color_palette("hls", len(np.unique(labels_subset))),
     legend="brief",
     alpha=0.3)
     plt.savefig("PCA_labels_2d_2.png")
@@ -58,12 +58,11 @@ def TSNE_(data,labels):
     hue=labels_subset,
     palette=sns.color_palette("hls", len(np.unique(labels_subset))),
     legend="brief",
-    alpha=0.3
-    )
+    alpha=0.3)
     plt.savefig("TSNE.png")
 
 def main():
-    # PCA_(x,encoded_labels,c)
-    TSNE_(x,encoded_labels)
+    PCA_(x,encoded_labels,c)
+    # TSNE_(x,encoded_labels)
 if __name__ == "__main__":
     main()
