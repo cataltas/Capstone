@@ -172,6 +172,7 @@ def train(model, batch_size, epochs, x, y, x_val, y_val, optimizer, criterion):
 
         print('Validation loss: {}, {}'.format(vloss.item(), torch.tensor(vlosses).mean() ))
 
+        # TODO: adjust early stopping
         if torch.tensor(losses).mean() < 1e-2:
             print('Epoch {} loss: {}, {}'.format(epoch+1, loss.item(), torch.tensor(losses).mean() ))
             break
@@ -184,18 +185,7 @@ def validation(model, x, y, criterion):
 
     with torch.no_grad():
         y_pred = model(x)
-        print('before discretizing:',y_pred.size())
 
-        # Assumes chip_len = 1725
-        chip_len = 1725
-        y_pred_6507 = y_pred[:, :chip_len].float().to(device)
-        y_pred_6507 = y_pred_6507.cpu()
-        y_pred_6507_disc = np.array([int(find_nearest(discrete, i)) for i in y_pred_6507.numpy().flatten()])
-        y_pred_6507 = torch.from_numpy(y_pred_6507_disc).float()
-        y_pred_6507 = y_pred_6507.view(1, len(y_pred_6507_disc))
-        y_new_6507 = y_pred_6507.to(device)
-        y_pred = torch.cat((y_pred_6507, y_pred[chip_len+1:]), dim=1)
-        print('after discretizing:',y_pred.size())
 
     loss = criterion(y_pred, y)
 
@@ -204,9 +194,6 @@ def validation(model, x, y, criterion):
     return y_pred.detach(), loss
 
 def test(model_path, x_test, y_test, criterion):
-    # Define set of possible values 6507 can take
-    discrete = [0,1,2,4,8,16,32]
-
     # Load the best model
     model.load_state_dict(torch.load(model_path))
     model.eval()
@@ -273,7 +260,8 @@ def predict_multiple_steps(model_path, X_val_data_tensor, y_val_data_tensor, num
         # print('x_new_6507 flattened:', x_new_6507.numpy().flatten())
         # print('x_new_6507 flattened shape:', x_new_6507.numpy().flatten().shape)
         x_new_6507_disc = np.array([int(find_nearest(discrete, i)) for i in x_new_6507.numpy().flatten()])
-        print('x_new_6507 discretized:', x_new_6507_disc)
+        if n % 100 == 0:
+            print('x_new_6507 discretized:', x_new_6507_disc)
         # print('x_new_6507 discretized shape:', x_new_6507_disc.shape)
         x_new_6507 = torch.from_numpy(x_new_6507_disc).float()
         x_new_6507 = x_new_6507.view(1, len(x_new_6507_disc))
@@ -296,7 +284,8 @@ def predict_multiple_steps(model_path, X_val_data_tensor, y_val_data_tensor, num
         # Store generated predictions
         y_next = y_next.cpu()
         y_next_disc = np.array([int(find_nearest(discrete, i)) for i in y_next.numpy().flatten()])
-        print('y_next discretized:', y_next_disc, np.sum(y_next_disc))
+        if n % 100 == 0:
+            print('y_next discretized:', y_next_disc, np.sum(y_next_disc))
         y_next = torch.from_numpy(y_next_disc).float()
         y_next = y_next.view(1, len(y_next_disc))
 
